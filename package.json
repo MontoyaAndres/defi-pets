@@ -1,0 +1,25 @@
+{
+  "name": "krebit-challenge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:MontoyaAndres/krebit-challenge.git",
+  "author": "MontoyaAndres <andresmontoyafcb@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/cache": "^11.11.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/server": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.15.14",
+    "@mui/material-nextjs": "^5.15.11",
+    "next": "^14.1.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  }
+}
