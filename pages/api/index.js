@@ -1,3 +1,3 @@
-export function GET(request) {
-  return new Response(`Hello from ${process.env.VERCEL_REGION}`);
+export default function handler(req, res) {
+  res.status(200).json({ message: "Hello from Next.js!" });
 }
