@@ -45,11 +45,12 @@ export const Home = () => {
         signer
       )
 
-      const tx = await contract.mint("Pet Name");
+      const data = await contract.mintPet("Pet Name");
+      await provider.waitForTransaction(data.hash);
+      const receipt = await provider.getTransactionReceipt(data.hash);
+      const tokenId = parseInt(receipt.logs[1].topics[3], 16);
+      console.log('new tokenId',tokenId); // This is the new tokenID
 
-      console.log('transaction :>> ', tx)
-      // wait for the transaction to actually settle in the blockchain
-      await tx.wait()
 
     } catch (error) {
       console.error(error);
