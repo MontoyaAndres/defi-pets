@@ -1,7 +1,45 @@
+import { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-import { Wrapper } from "./styles";
+
+import { NotWallet, Wrapper } from "./styles";
 
 export const Home = () => {
+  const [walletAddress, setWalletAddress] = useState(null);
+
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        setWalletAddress(accounts[0]);
+      });
+    }
+  }, []);
+
+  async function connectWallet() {
+    try {
+      if (!window.ethereum) {
+        alert("Please install MetaMask!");
+        return;
+      }
+
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setWalletAddress(accounts[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  if (!walletAddress) {
+    return (
+      <NotWallet>
+        <Button variant="contained" onClick={connectWallet}>
+          Connect Wallet
+        </Button>
+      </NotWallet>
+    );
+  }
+
   return (
     <Wrapper>
       <div className="left">

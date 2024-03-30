@@ -1,3 +1,5 @@
 export default function handler(req, res) {
-  res.status(200).json({ message: "Hello from Next.js!" });
+  const { token, address } = req.query;
+
+  res.status(200).json({ token, address });
 }
