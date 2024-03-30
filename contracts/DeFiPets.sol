@@ -115,12 +115,13 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
     /**
     * @dev Called by players to make a new pet.
     */
-    function safeMint(address to, string memory name) public {
+    function mintPet(address to, string memory name) public returns (uint256) {
         uint256 tokenId = _tokenIdCounter;
         _createPet(to, name, tokenId);
         pets[tokenId].alive = true;
         _safeMint(to, tokenId);
         _tokenIdCounter += 1;
+        return tokenId;
     }
 
     // Function to update DeFi-Pet attributes and reflect in Tableland

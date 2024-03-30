@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
-
+import { ethers } from "ethers";
 import { NotWallet, Wrapper } from "./styles";
+
+import defiPets from '../../schemas/defiPets.json' assert { type: 'json' };
 
 export const Home = () => {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -25,6 +27,30 @@ export const Home = () => {
         method: "eth_requestAccounts",
       });
       setWalletAddress(accounts[0]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function mintPet() {
+    try {
+      // create provider from Metamask
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      // get the account that will pay for the trasaction
+      const signer = provider.getSigner()
+
+      let contract = new ethers.Contract(
+        defiPets.arbitrumSepolia,
+        defiPets.abi,
+        signer
+      )
+
+      const tx = await contract.mint("Pet Name");
+
+      console.log('transaction :>> ', tx)
+      // wait for the transaction to actually settle in the blockchain
+      await tx.wait()
+
     } catch (error) {
       console.error(error);
     }
