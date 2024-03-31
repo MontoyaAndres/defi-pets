@@ -602,6 +602,22 @@
   resolved "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.1.tgz#16308cea045f0fc777b6ff20a9f25474dd8293d2"
   integrity sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==
 
+"@guildxyz/sdk@^2.5.0":
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/@guildxyz/sdk/-/sdk-2.5.0.tgz#2a84e42455921332ecf4f3740621dd3100953064"
+  integrity sha512-q9EknLiXz2pSz5zD+mfgI9RAwBwwum3OjybCMoi/rU6iFyIKQtpJ4JozRyeE0XcuEz2y/EOJ2nsFNr2HJyX4Xg==
+  dependencies:
+    "@guildxyz/types" "^1.7.31"
+    ethers "^6.7.1"
+    randombytes "^2.1.0"
+
+"@guildxyz/types@^1.7.31":
+  version "1.7.32"
+  resolved "https://registry.yarnpkg.com/@guildxyz/types/-/types-1.7.32.tgz#436690c4baec189eb42c2164693d27a9c1427228"
+  integrity sha512-3a1a+kM3hdm7OVV/erVNW9J7LU7IBLQ4dcfICqAMP7/jcFHkpXp18MmiJ6vYrjnoz6Sr+im3mdqJax6b4Nbt+g==
+  dependencies:
+    zod "^3.22.4"
+
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz#7a0ee601f60f99a20c7c7c5ff0c80388c1189bd6"
@@ -2509,7 +2525,7 @@ ethers@^5.6.9, ethers@^5.7.2:
     "@ethersproject/web" "5.7.1"
     "@ethersproject/wordlists" "5.7.0"
 
-ethers@^6.4.0, ethers@^6.7.0:
+ethers@^6.4.0, ethers@^6.7.0, ethers@^6.7.1:
   version "6.11.1"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.11.1.tgz#96aae00b627c2e35f9b0a4d65c7ab658259ee6af"
   integrity sha512-mxTAE6wqJQAbp5QAe/+o+rXOID7Nw91OZXvgpjDa1r4fAbq2Nu314oEZSbjoRLacuCzs7kUC3clEvkCQowffGg==
@@ -4913,3 +4929,8 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
+
+zod@^3.22.4:
+  version "3.22.4"
+  resolved "https://registry.yarnpkg.com/zod/-/zod-3.22.4.tgz#f31c3a9386f61b1f228af56faa9255e845cf3fff"
+  integrity sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==

@@ -1,3 +1,5 @@
+import { guild } from '@guildxyz/sdk';
+
 import { Database } from "@tableland/sdk";
 const db = new Database();
 
@@ -36,16 +38,27 @@ async function getPet(tokenId) {
   return pets.results;
 }
 
+const getGuildRoles = async (guildId, userAddress) => {
+  const roles = await guild.getUserMemberships(guildId, userAddress);
+  const actives = roles.filter(r => {
+    return r.access ? true : false;
+  });
+};
+
 export default async function handler(req, res) {
   const { tokenId } = req.query;
   const pet = await getPet(tokenId);
   console.log('pet from db:', pet);
+
+//TODO:  check getGuildRoles(pet.owner) and compare if pet.points/health needs to be updated on the contract
+
   /*
   let tokenNumber = '0';
   if (isNaN(Number(tokenId))) {
     tokenNumber = ethers.BigNumber.from('0x' + tokenId).toString();
   }*/
 
+  //TODO: porqué no está esperando el await de getPet?
   if (pet.id){
   const image = await getImage(pet);
 
