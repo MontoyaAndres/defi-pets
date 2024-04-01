@@ -19,7 +19,7 @@ const getImage = async (pet) => {
   if (pet.health == 0) image = dead;
 
   return '<svg width="480" height="480" enable-background="new 0 0 20 20" fill="#000000" version="1.1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">' +
-    '<rect width="20" height="20" fill="none"/>' +
+    '<rect width="480" height="480" fill="#fff"/>' +
     image +
     '<g fill="#000000" font-family="sans-serif" stroke-width=".41667">' +
     '<text x="20.960583" y="121.00983" font-size="16.667px" style="line-height:1.25" xml:space="preserve"><tspan x="20.960583" y="121.00983" stroke-width=".41667">Name: ' + pet.name + '</tspan></text>' +
