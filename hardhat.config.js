@@ -8,6 +8,10 @@ module.exports = {
     hardhat: {
       chainId: 1337,
     },
+    tableland: {
+      chainId: 31337,
+      url: 'http://127.0.0.1:8545',
+    },
     arbitrumSepolia: {
       url: 'https://sepolia-rollup.arbitrum.io/rpc',
       chainId: 421614,
@@ -21,4 +25,9 @@ module.exports = {
   etherscan: {
     apiKey: process.env.ARBISCAN_API_KEY,
   },
+  sourcify: {
+    // Disabled by default
+    // Doesn't need an API key
+    enabled: true
+  }
 };

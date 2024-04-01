@@ -8,22 +8,21 @@ import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@tableland/evm/contracts/ITablelandTables.sol";
 import "@tableland/evm/contracts/utils/TablelandDeployments.sol";
-import "@tableland/evm/contracts/utils/URITemplate.sol";
+import "@tableland/evm/contracts/utils/SQLHelpers.sol";
 
-contract DeFiPets is ERC721, ERC721Holder, Ownable {    
-    
+contract DeFiPets is ERC721, ERC721Holder, Ownable {
     // The metadata API
-    string private _baseURIString = "https://krebit-challenge.vercel.app/api/metadata/";
-
+    string private _baseURIString =
+        "https://krebit-challenge.vercel.app/api/metadata?tokenId=";
+    string private _contractURIString =
+        "https://krebit-challenge.vercel.app/api/";
 
     // Tableland setup for storing DeFi-Pet metadata
-    ITablelandTables private tableland;
-    string private tablelandTableName;
-    uint256 private tablelandTableId;
+    uint256 private _tableId; // Unique table ID
+    string private constant _TABLE_PREFIX = "defi_pets"; // Custom table prefix
 
-     uint256 private _tokenIdCounter;
+    uint256 private _tokenIdCounter;
 
     // Holds core data for every pet minted
     struct DeFiPet {
@@ -34,40 +33,33 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
 
     mapping(uint256 => DeFiPet) pets;
 
-    constructor(address initialOwner)
-        ERC721("DeFiPets", "DFP")
-        Ownable(initialOwner)
-        {
-        // Initialize Tableland
-        tableland = TablelandDeployments.get();
-
-        tablelandTableId = tableland.createTable(
+    constructor() ERC721("DeFiPets", "DFP") Ownable(_msgSender()) {
+        _tableId = TablelandDeployments.get().create(
             address(this),
-            string.concat(
-                "CREATE TABLE defi_pets_",
-                Strings.toString(block.chainid),
-                " (",
-                " id INTEGER PRIMARY KEY,",
-                " owner TEXT,",
-                " name TEXT,",
-                " created INTEGER,",
-                " points INTEGER,",
-                " health INTEGER,",
-                " evolutionStage INTEGER",
-                ");"
+            SQLHelpers.toCreateFromSchema(
+                "id INTEGER PRIMARY KEY,"
+                "owner TEXT,"
+                "name TEXT,"
+                "created INTEGER,"
+                "points INTEGER,"
+                "health INTEGER,"
+                "evolutionStage INTEGER",
+                _TABLE_PREFIX
             )
         );
 
-        // Store the table name locally for future reference.
-        tablelandTableName = string.concat(
-            "defi_pets_",
-            Strings.toString(block.chainid),
-            "_",
-            Strings.toString(tablelandTableId)
-        );
-
+        mintPet(_msgSender(),"Zero");
     }
 
+    // Return the table ID
+    function getTableId() external view returns (uint256) {
+        return _tableId;
+    }
+
+    // Return the table name
+    function getTableName() external view returns (string memory) {
+        return SQLHelpers.toNameFromId(_TABLE_PREFIX, _tableId);
+    }
 
     // The base URI used by tokenURI
     function _baseURI() internal view override returns (string memory) {
@@ -75,7 +67,15 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
     }
 
     function setBaseURI(string memory baseURI) public onlyOwner {
-	    _baseURIString = baseURI;
+        _baseURIString = baseURI;
+    }
+
+    function contractURI() public view returns (string memory) {
+        return _contractURIString;
+    }
+
+    function setContractURI(string memory newContractURI) public onlyOwner {
+        _contractURIString = newContractURI;
     }
 
     /**
@@ -93,28 +93,30 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
         /*
          * insert a single row for the pet metadata
          */
-        tableland.runSQL(
-            address(this),
-            tablelandTableId,
-            string.concat(
-                "INSERT INTO ",
-                tablelandTableName,
-                "(id, owner, name, created, points, health, evolutionStage) VALUES (",
-                tokenIdString,
-                ",'",
-                ownerString,
-                "',",
-                name,
-                "',",
-                nowString,
-                ",0,10,0);"
+        TablelandDeployments.get().mutate(
+            address(this), // Table owner, i.e., this contract
+            _tableId,
+            SQLHelpers.toInsert(
+                _TABLE_PREFIX,
+                _tableId,
+                "id, owner, name, created, points, health, evolutionStage",
+                string.concat(
+                    tokenIdString, // Convert to a string
+                    ",",
+                    SQLHelpers.quote(ownerString),
+                    ",",
+                    SQLHelpers.quote(name),
+                    ",",
+                    SQLHelpers.quote(nowString),
+                    ",0,100,0"
+                )
             )
         );
     }
 
     /**
-    * @dev Called by players to make a new pet.
-    */
+     * @dev Called by players to make a new pet.
+     */
     function mintPet(address to, string memory name) public returns (uint256) {
         uint256 tokenId = _tokenIdCounter;
         _createPet(to, name, tokenId);
@@ -125,32 +127,44 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
     }
 
     // Function to update DeFi-Pet attributes and reflect in Tableland
-    function updatePet(uint256 tokenId, uint256 points, uint256 health, uint256 evolutionStage) public onlyOwner {
+    function updatePet(
+        uint256 tokenId,
+        uint256 points,
+        uint256 health,
+        uint256 evolutionStage
+    ) public onlyOwner {
         require(pets[tokenId].alive, "DeFiPetNFT: update for nonexistent pet");
 
         if (health == 0) {
             pets[tokenId].alive = false;
         }
 
-        // Update attributes in Tableland
-        string memory updateSQL = string(abi.encodePacked(
-            "UPDATE ", tablelandTableName, " SET ",
-            "points = ", Strings.toString(points), ", ",
-            "health = ", Strings.toString(health), ", ",
-            "evolutionStage = ", Strings.toString(evolutionStage),
-            " WHERE id = ", Strings.toString(tokenId), ";"
-        ));
-        tableland.runSQL(address(this), tablelandTableId, updateSQL);
-
+        // Set the values to update
+        string memory setters = string.concat(
+                "points = ",
+                Strings.toString(points),
+                ", ",
+                "health = ",
+                Strings.toString(health),
+                ", ",
+                "evolutionStage = ",
+                Strings.toString(evolutionStage)
+                );
+        // Specify filters for which row to update
+        string memory filters = string.concat("id=", Strings.toString(tokenId));
+        // Mutate a row at `id` with a new `val`
+        TablelandDeployments.get().mutate(
+            address(this),
+            _tableId,
+            SQLHelpers.toUpdate(_TABLE_PREFIX, _tableId, setters, filters)
+        );
     }
 
     /* function tokenURI(uint256 tokenId) public view override(ERC721URIStorage, ERC721) returns (string memory) {
         return super.tokenURI(tokenId);
     }*/
 
-   /* function totalSupply() override public view returns (uint256) {
+    /* function totalSupply() override public view returns (uint256) {
       return _tokenIdCounter;
     }*/
-
-
 }
