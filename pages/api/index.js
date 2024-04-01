@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
     const result = {
       name: 'DeFi Pets',
-      description: `DeFi Pet Collection`,
+      description: `DeFi Educatinal Game with AI Pets`,
       image_data: image,
       external_url: 'https://krebit-challenge.vercel.app'
     };

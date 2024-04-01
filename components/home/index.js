@@ -10,9 +10,20 @@ export const Home = () => {
 
   useEffect(() => {
     if (window.ethereum) {
+
       window.ethereum.on("accountsChanged", (accounts) => {
         setWalletAddress(accounts[0]);
       });
+
+      window.ethereum.on("network", (newNetwork, oldNetwork) => {
+        // When a Provider makes its initial connection, it emits a "network"
+        // event with a null oldNetwork along with the newNetwork. So, if the
+        // oldNetwork exists, it represents a changing network
+        if (oldNetwork) {
+          window.location.reload();
+        }
+      });
+
     }
   }, []);
 
@@ -22,6 +33,21 @@ export const Home = () => {
         alert("Please install MetaMask!");
         return;
       }
+
+      window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [{
+          chainId: "0x66eee",
+          rpcUrls: ["https://sepolia-rollup.arbitrum.io/rpc"],
+          chainName: "Arbitrum Sepolia",
+          nativeCurrency: {
+            name: "ETH",
+            symbol: "ETH",
+            decimals: 18
+          },
+          blockExplorerUrls: ["https://sepolia.arbiscan.io/"]
+        }]
+      });
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
@@ -35,9 +61,9 @@ export const Home = () => {
   async function mintPet() {
     try {
       // create provider from Metamask
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const provider = new ethers.BrowserProvider(window.ethereum)
       // get the account that will pay for the trasaction
-      const signer = provider.getSigner()
+      const signer = await provider.getSigner()
 
       let contract = new ethers.Contract(
         defiPets.arbitrumSepolia,
@@ -45,11 +71,11 @@ export const Home = () => {
         signer
       )
 
-      const data = await contract.mintPet("Pet Name");
-      await provider.waitForTransaction(data.hash);
-      const receipt = await provider.getTransactionReceipt(data.hash);
+      const tx = await contract.mintPet(walletAddress, "Pet Name");
+      await tx.wait();
+      const receipt = await provider.getTransactionReceipt(tx.hash);
       const tokenId = parseInt(receipt.logs[1].topics[3], 16);
-      console.log('new tokenId',tokenId); // This is the new tokenID
+      console.log('new tokenId', tokenId); // This is the new tokenID, go to tokenPage
 
 
     } catch (error) {
@@ -73,7 +99,7 @@ export const Home = () => {
         <div className="emoji">🥚</div>
         <div className="buttons">
           <Button variant="contained">Feed</Button>
-          <Button variant="contained">Mint</Button>
+          <Button variant="contained" onClick={mintPet}>Mint</Button>
         </div>
       </div>
       <div className="right">
