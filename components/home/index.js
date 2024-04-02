@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { TextField } from "@mui/material";
+import { Button } from '../button';
 import { ethers } from "ethers";
 import { NotWallet, Wrapper } from "./styles";
 
@@ -86,9 +87,13 @@ export const Home = () => {
   if (!walletAddress) {
     return (
       <NotWallet>
-        <Button variant="contained" onClick={connectWallet}>
-          Connect Wallet
-        </Button>
+        
+        <div className="connect-button">
+            <Button
+              text="Connect"
+              onClick={() => connectWallet()}
+            />
+          </div>
       </NotWallet>
     );
   }
@@ -98,8 +103,12 @@ export const Home = () => {
       <div className="left">
         <div className="emoji">🥚</div>
         <div className="buttons">
-          <Button variant="contained">Feed</Button>
-          <Button variant="contained" onClick={mintPet}>Mint</Button>
+          <div className="connect-button">
+            <Button
+              text="Mint"
+              onClick={() => mintPet()}
+            />
+          </div>
         </div>
       </div>
       <div className="right">
