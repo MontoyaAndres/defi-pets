@@ -1,17 +1,21 @@
-import { useEffect, useState } from "react";
-import { TextField } from "@mui/material";
-import { Button } from '../button';
+import { useEffect } from "react";
+import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
-import { NotWallet, Wrapper } from "./styles";
+import Card from "@mui/material/Card";
+import CardActions from "@mui/material/CardActions";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
 
-import defiPets from '../../schemas/defiPets.json' assert { type: 'json' };
+import { Wrapper } from "./styles";
 
-export const Home = () => {
-  const [walletAddress, setWalletAddress] = useState(null);
+import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
+
+export const Home = (props) => {
+  const { walletAddress } = props;
+  console.log(walletAddress);
 
   useEffect(() => {
     if (window.ethereum) {
-
       window.ethereum.on("accountsChanged", (accounts) => {
         setWalletAddress(accounts[0]);
       });
@@ -24,102 +28,79 @@ export const Home = () => {
           window.location.reload();
         }
       });
-
     }
   }, []);
-
-  async function connectWallet() {
-    try {
-      if (!window.ethereum) {
-        alert("Please install MetaMask!");
-        return;
-      }
-
-      window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [{
-          chainId: "0x66eee",
-          rpcUrls: ["https://sepolia-rollup.arbitrum.io/rpc"],
-          chainName: "Arbitrum Sepolia",
-          nativeCurrency: {
-            name: "ETH",
-            symbol: "ETH",
-            decimals: 18
-          },
-          blockExplorerUrls: ["https://sepolia.arbiscan.io/"]
-        }]
-      });
-
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      setWalletAddress(accounts[0]);
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   async function mintPet() {
     try {
       // create provider from Metamask
-      const provider = new ethers.BrowserProvider(window.ethereum)
+      const provider = new ethers.BrowserProvider(window.ethereum);
       // get the account that will pay for the trasaction
-      const signer = await provider.getSigner()
+      const signer = await provider.getSigner();
 
       let contract = new ethers.Contract(
         defiPets.arbitrumSepolia,
         defiPets.abi,
         signer
-      )
+      );
 
       const tx = await contract.mintPet(walletAddress, "Pet Name");
       await tx.wait();
       const receipt = await provider.getTransactionReceipt(tx.hash);
       const tokenId = parseInt(receipt.logs[1].topics[3], 16);
-      console.log('new tokenId', tokenId); // This is the new tokenID, go to tokenPage
-
-
+      console.log("new tokenId", tokenId); // This is the new tokenID, go to tokenPage
     } catch (error) {
       console.error(error);
     }
   }
 
-  if (!walletAddress) {
-    return (
-      <NotWallet>
-        
-        <div className="connect-button">
-            <Button
-              text="Connect"
-              onClick={() => connectWallet()}
-            />
-          </div>
-      </NotWallet>
-    );
-  }
-
   return (
     <Wrapper>
-      <div className="left">
-        <div className="emoji">🥚</div>
-        <div className="buttons">
-          <div className="connect-button">
-            <Button
-              text="Mint"
-              onClick={() => mintPet()}
-            />
-          </div>
-        </div>
+      <div className="titles">
+        <Typography variant="h4" className="title">
+          Welcome to DeFi Pets
+        </Typography>
+        <Typography variant="h6" className="description">
+          DeFi-Pets is a collection of 10,000 unique and adorable pets living on
+          the blockchain. Each pet is an NFT, and the owner of the NFT has the
+          right to name the pet and participate in various activities.
+        </Typography>
       </div>
-      <div className="right">
-        <div className="box">
-          <p className="ai">Hello I'm an AI system</p>
-          <p className="user">Hello I'm an user from the Dark web</p>
-          <p className="ai">Hello I'm an AI system</p>
-          <p className="user">Hello I'm an user from the Dark web</p>
-          <p className="ai">Hello I'm an AI system</p>
-        </div>
-        <TextField className="input" placeholder="Enter message" />
+      <div className="cards">
+        {new Array(6).fill(0).map((_, index) => (
+          <Card sx={{ maxWidth: 345 }} key={index}>
+            <CardMedia
+              sx={{ height: 140 }}
+              image="/photo_4931793251464228547_x.jpg"
+              title="green iguana"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Egg
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Lizards are a widespread group of squamate reptiles, with over
+                6,000 species, ranging across all continents except Antarctica
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                color="secondary"
+                style={{ fontWeight: 500 }}
+              >
+                Mint
+              </Button>
+              <Button
+                size="small"
+                color="secondary"
+                style={{ fontWeight: 500 }}
+              >
+                Share
+              </Button>
+            </CardActions>
+          </Card>
+        ))}
       </div>
     </Wrapper>
   );

@@ -1,7 +1,7 @@
 import { Home } from "../components";
 
-const Index = () => {
-  return <Home />;
+const Index = (props) => {
+  return <Home {...props} />;
 };
 
 export default Index;
