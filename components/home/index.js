@@ -1,4 +1,5 @@
 import { useEffect, Fragment, useState } from "react";
+import axios from "axios";
 import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
 import Card from "@mui/material/Card";
@@ -41,6 +42,37 @@ export const Home = (props) => {
         }
       });
     }
+  }, []);
+
+  useEffect(() => {
+    if (!window) return;
+
+    const getDataModel = async () => {
+      try {
+        const payload = {
+          question: "",
+          chat_history: [],
+          knowledge_source_id: process.env.FLOCK_API_ID,
+        };
+        const headers = {
+          "x-api-key": process.env.FLOCK_API_KEY,
+        };
+
+        const response = await axios.post(
+          `https://rag-chat-ml-backend-prod.flock.io/chat/conversational_rag_chat`,
+          payload,
+          {
+            headers,
+          }
+        );
+
+        console.log(response);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getDataModel();
   }, []);
 
   const handleOpenDialog = (value) => {
