@@ -1,4 +1,4 @@
-import { useEffect, Fragment } from "react";
+import { useEffect, Fragment, useState } from "react";
 import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
 import Card from "@mui/material/Card";
@@ -11,6 +11,11 @@ import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
 import Avatar from "@mui/material/Avatar";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import { Wrapper } from "./styles";
 
@@ -18,7 +23,7 @@ import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 
 export const Home = (props) => {
   const { walletAddress } = props;
-  console.log(walletAddress);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -36,6 +41,10 @@ export const Home = (props) => {
       });
     }
   }, []);
+
+  const handleOpenDialog = (value) => {
+    setOpenDialog(value);
+  };
 
   async function mintPet() {
     try {
@@ -61,125 +70,172 @@ export const Home = (props) => {
   }
 
   return (
-    <Wrapper>
-      <div className="titles">
-        <Typography variant="h4" className="title">
-          Welcome to DeFi Pets
-        </Typography>
-        <Typography variant="h6" className="description">
-          DeFi-Pets is a collection of 10,000 unique and adorable pets living on
-          the blockchain. Each pet is an NFT, and the owner of the NFT has the
-          right to name the pet and participate in various activities.
-        </Typography>
-      </div>
-      <div className="elements">
-        <div className="element">
-          <Card sx={{ maxWidth: 345 }}>
-            <CardMedia
-              sx={{ height: 361 }}
-              image="/photo_4931793251464228547_x.jpg"
-              title="green iguana"
+    <>
+      {openDialog && (
+        <Dialog
+          open={open}
+          onClose={() => handleOpenDialog(false)}
+          PaperProps={{
+            component: "form",
+            onSubmit: (event) => {
+              event.preventDefault();
+              const formData = new FormData(event.currentTarget);
+              const formJson = Object.fromEntries(formData.entries());
+              const name = formJson.name;
+
+              if (!name) return;
+
+              console.log(name);
+              handleOpenDialog(false);
+            },
+          }}
+        >
+          <DialogTitle>Mint pet</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Mint you pet here, enter the name of the pet
+            </DialogContentText>
+            <TextField
+              autoFocus
+              required
+              margin="dense"
+              id="name"
+              name="name"
+              label="Name"
+              fullWidth
+              variant="standard"
             />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Egg
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                size="small"
-                color="secondary"
-                style={{ fontWeight: 500 }}
-              >
-                Mint
-              </Button>
-            </CardActions>
-          </Card>
-        </div>
-        <div>
-          <Typography
-            gutterBottom
-            variant="h5"
-            component="div"
-            style={{ fontWeight: 600 }}
-          >
-            Top 10 DeFi-Pets
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => handleOpenDialog(false)}>Cancel</Button>
+            <Button type="submit">Save</Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      <Wrapper>
+        <div className="titles">
+          <Typography variant="h4" className="title">
+            Welcome to DeFi Pets
           </Typography>
-          <div className="leaderboard">
-            <List sx={{ bgcolor: "background.paper" }}>
-              {new Array(10).fill(null).map((_, index) => (
-                <>
-                  <ListItem alignItems="flex-start">
-                    <ListItemAvatar>
-                      <Avatar
-                        alt="Remy Sharp"
-                        src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
+          <Typography variant="h6" className="description">
+            DeFi-Pets is a collection of 10,000 unique and adorable pets living
+            on the blockchain. Each pet is an NFT, and the owner of the NFT has
+            the right to name the pet and participate in various activities.
+          </Typography>
+        </div>
+        <div className="elements">
+          <div className="element">
+            <Card sx={{ maxWidth: 345 }}>
+              <CardMedia
+                sx={{ height: 361 }}
+                image="/photo_4931793251464228547_x.jpg"
+                title="green iguana"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Egg
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Lizards are a widespread group of squamate reptiles, with over
+                  6,000 species, ranging across all continents except Antarctica
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="secondary"
+                  style={{ fontWeight: 500 }}
+                  onClick={() => handleOpenDialog(true)}
+                >
+                  Mint
+                </Button>
+              </CardActions>
+            </Card>
+          </div>
+          <div>
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              style={{ fontWeight: 600 }}
+            >
+              Top 10 DeFi-Pets
+            </Typography>
+            <div className="leaderboard">
+              <List sx={{ bgcolor: "background.paper" }}>
+                {new Array(10).fill(null).map((_, index) => (
+                  <>
+                    <ListItem alignItems="flex-start">
+                      <ListItemAvatar>
+                        <Avatar
+                          alt="Remy Sharp"
+                          src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
+                        />
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary="Brunch this weekend?"
+                        secondary={
+                          <Fragment>
+                            <Typography
+                              sx={{ display: "inline" }}
+                              component="span"
+                              variant="body2"
+                              color="text.primary"
+                            >
+                              Ali Connors
+                            </Typography>
+                            {
+                              " — I'll be in your neighborhood doing errands this…"
+                            }
+                          </Fragment>
+                        }
                       />
-                    </ListItemAvatar>
-                    <ListItemText
-                      primary="Brunch this weekend?"
-                      secondary={
-                        <Fragment>
-                          <Typography
-                            sx={{ display: "inline" }}
-                            component="span"
-                            variant="body2"
-                            color="text.primary"
-                          >
-                            Ali Connors
-                          </Typography>
-                          {
-                            " — I'll be in your neighborhood doing errands this…"
-                          }
-                        </Fragment>
-                      }
-                    />
-                  </ListItem>
-                  <Divider variant="inset" component="li" />
-                </>
-              ))}
-            </List>
+                    </ListItem>
+                    <Divider variant="inset" component="li" />
+                  </>
+                ))}
+              </List>
+            </div>
           </div>
         </div>
-      </div>
-      <div className="titles">
-        <Typography variant="h4" className="title">
-          My DeFi Pets
-        </Typography>
-      </div>
-      <div className="cards">
-        {new Array(6).fill(0).map((_, index) => (
-          <Card sx={{ maxWidth: 345 }} key={index}>
-            <CardMedia
-              sx={{ height: 140 }}
-              image="/photo_4931793251464228547_x.jpg"
-              title="green iguana"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="h5" component="div">
-                Egg
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Lizards are a widespread group of squamate reptiles, with over
-                6,000 species, ranging across all continents except Antarctica
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                size="small"
-                color="secondary"
-                style={{ fontWeight: 500 }}
-              >
-                Mint
-              </Button>
-            </CardActions>
-          </Card>
-        ))}
-      </div>
-    </Wrapper>
+        <div className="titles">
+          <Typography variant="h4" className="title">
+            My DeFi Pets
+          </Typography>
+        </div>
+        <div className="cards">
+          {new Array(6).fill(0).map((_, index) => (
+            <Card sx={{ maxWidth: 345 }} key={index}>
+              <CardMedia
+                sx={{ height: 140 }}
+                image="/photo_4931793251464228547_x.jpg"
+                title="green iguana"
+              />
+              <CardContent>
+                <Typography gutterBottom variant="h5" component="div">
+                  Egg
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Lizards are a widespread group of squamate reptiles, with over
+                  6,000 species, ranging across all continents except Antarctica
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  color="secondary"
+                  style={{ fontWeight: 500 }}
+                  onClick={() => {
+                    console.log("jhey");
+                  }}
+                >
+                  Open in Open sea
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </div>
+      </Wrapper>
+    </>
   );
 };
