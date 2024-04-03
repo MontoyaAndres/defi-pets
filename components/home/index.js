@@ -24,7 +24,7 @@ import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 export const Home = (props) => {
   const { walletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
-  const [mintAlready, setMintAlready] = useState(false);
+  const [mintAlready, setMintAlready] = useState(true);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -145,62 +145,153 @@ export const Home = (props) => {
                   6,000 species, ranging across all continents except Antarctica
                 </Typography>
               </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="secondary"
-                  style={{ fontWeight: 500 }}
-                  onClick={() => handleOpenDialog(true)}
-                >
-                  Mint
-                </Button>
-              </CardActions>
+              {mintAlready ? (
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    style={{ fontWeight: 500 }}
+                  >
+                    Feed
+                  </Button>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    style={{ fontWeight: 500 }}
+                  >
+                    Train
+                  </Button>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    style={{ fontWeight: 500 }}
+                  >
+                    Clean
+                  </Button>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    style={{ fontWeight: 500 }}
+                  >
+                    Play
+                  </Button>
+                </CardActions>
+              ) : (
+                <CardActions>
+                  <Button
+                    size="small"
+                    color="secondary"
+                    style={{ fontWeight: 500 }}
+                    onClick={() => handleOpenDialog(true)}
+                  >
+                    Mint
+                  </Button>
+                </CardActions>
+              )}
             </Card>
           </div>
-          <div>
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              style={{ fontWeight: 600 }}
-            >
-              Top 10 DeFi-Pets
-            </Typography>
-            <div className="leaderboard">
-              <List sx={{ bgcolor: "background.paper" }}>
-                {new Array(10).fill(null).map((_, index) => (
-                  <>
-                    <ListItem alignItems="flex-start">
-                      <ListItemAvatar>
-                        <Avatar
-                          alt="Remy Sharp"
-                          src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
-                        />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary="Brunch this weekend?"
-                        secondary={
-                          <Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Ali Connors
-                            </Typography>
-                            {
-                              " — I'll be in your neighborhood doing errands this…"
-                            }
-                          </Fragment>
-                        }
-                      />
-                    </ListItem>
-                    <Divider variant="inset" component="li" />
-                  </>
-                ))}
-              </List>
+          {mintAlready ? (
+            <div className="chat">
+              <div className="chat-box">
+                <p className="ai">Hello I'm an AI system</p>
+                <p className="user">Hello I'm an user from the Dark web</p>
+                <p className="ai">Hello I'm an AI system</p>
+                <p className="user">Hello I'm an user from the Dark web</p>
+                <p className="ai">Hello I'm an AI system</p>
+              </div>
+              <TextField className="input" placeholder="Enter message" />
             </div>
+          ) : (
+            <div>
+              <Typography
+                gutterBottom
+                variant="h5"
+                component="div"
+                style={{ fontWeight: 600 }}
+              >
+                Top 10 DeFi-Pets
+              </Typography>
+              <div className="leaderboard">
+                <List sx={{ bgcolor: "background.paper" }}>
+                  {new Array(10).fill(null).map((_, index) => (
+                    <>
+                      <ListItem alignItems="flex-start">
+                        <ListItemAvatar>
+                          <Avatar
+                            alt="Remy Sharp"
+                            src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
+                          />
+                        </ListItemAvatar>
+                        <ListItemText
+                          primary="Brunch this weekend?"
+                          secondary={
+                            <Fragment>
+                              <Typography
+                                sx={{ display: "inline" }}
+                                component="span"
+                                variant="body2"
+                                color="text.primary"
+                              >
+                                Ali Connors
+                              </Typography>
+                              {
+                                " — I'll be in your neighborhood doing errands this…"
+                              }
+                            </Fragment>
+                          }
+                        />
+                      </ListItem>
+                      <Divider variant="inset" component="li" />
+                    </>
+                  ))}
+                </List>
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="subelements">
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            style={{ fontWeight: 600 }}
+          >
+            Top 10 DeFi-Pets
+          </Typography>
+          <div className="leaderboard">
+            <List sx={{ bgcolor: "background.paper" }}>
+              {new Array(10).fill(null).map((_, index) => (
+                <>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Brunch this weekend?"
+                      secondary={
+                        <Fragment>
+                          <Typography
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            Ali Connors
+                          </Typography>
+                          {
+                            " — I'll be in your neighborhood doing errands this…"
+                          }
+                        </Fragment>
+                      }
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                </>
+              ))}
+            </List>
           </div>
         </div>
         <div className="titles">
