@@ -26,6 +26,9 @@ export const Home = (props) => {
   const { walletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
   const [mintAlready, setMintAlready] = useState(true);
+  const [history, setHistory] = useState([]);
+  const [message, setMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState("idle");
 
   useEffect(() => {
     if (window.ethereum) {
@@ -47,33 +50,37 @@ export const Home = (props) => {
   useEffect(() => {
     if (!window) return;
 
-    const getDataModel = async () => {
-      try {
-        const payload = {
-          question: "",
-          chat_history: [],
-          knowledge_source_id: process.env.NEXT_PUBLIC_FLOCK_API_ID,
-        };
-        const headers = {
-          "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
-        };
-
-        const response = await axios.post(
-          `https://rag-chat-ml-backend-prod.flock.io/chat/conversational_rag_chat`,
-          payload,
-          {
-            headers,
-          }
-        );
-
-        console.log(response);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    getDataModel();
+    getDataModel(
+      "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi.",
+      []
+    );
   }, []);
+
+  const getDataModel = async (message, history = []) => {
+    try {
+      const payload = {
+        question: message,
+        chat_history: history,
+        knowledge_source_id: process.env.NEXT_PUBLIC_FLOCK_API_ID,
+      };
+      const headers = {
+        "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
+      };
+
+      const response = await axios.post(
+        `https://rag-chat-ml-backend-prod.flock.io/chat/conversational_rag_chat`,
+        payload,
+        {
+          headers,
+        }
+      );
+
+      // TODO: set here history for first message
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleOpenDialog = (value) => {
     setOpenDialog(value);
@@ -81,6 +88,30 @@ export const Home = (props) => {
 
   const handleAlreadyMint = (value) => {
     setMintAlready(value);
+  };
+
+  const handleSendMessage = async (message) => {
+    setHistory((prevValues) => [...prevValues, { message, type: "user" }]);
+    setMessage("");
+
+    setStatusMessage("loading");
+    const aiResponse = await getDataModel(
+      message,
+      history.map((item) => item.message)
+    );
+    // TODO: save ai response in history
+    setStatusMessage("idle");
+  };
+
+  const handleMessage = (event) => {
+    if (statusMessage === "loading") return;
+
+    if (event.key === "Enter") {
+      handleSendMessage(event.target.value);
+      return;
+    }
+
+    setMessage(event.target.value);
   };
 
   async function mintPet() {
@@ -231,7 +262,13 @@ export const Home = (props) => {
                 <p className="user">Hello I'm an user from the Dark web</p>
                 <p className="ai">Hello I'm an AI system</p>
               </div>
-              <TextField className="input" placeholder="Enter message" />
+              <TextField
+                className="input"
+                placeholder="Enter message"
+                onChange={handleMessage}
+                onKeyDown={handleMessage}
+                value={message}
+              />
             </div>
           ) : (
             <div>
