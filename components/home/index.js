@@ -24,6 +24,7 @@ import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 export const Home = (props) => {
   const { walletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
+  const [mintAlready, setMintAlready] = useState(false);
 
   useEffect(() => {
     if (window.ethereum) {
@@ -44,6 +45,10 @@ export const Home = (props) => {
 
   const handleOpenDialog = (value) => {
     setOpenDialog(value);
+  };
+
+  const handleAlreadyMint = (value) => {
+    setMintAlready(value);
   };
 
   async function mintPet() {

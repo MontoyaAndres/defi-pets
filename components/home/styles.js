@@ -23,7 +23,6 @@ export const Wrapper = styled.div`
   }
 
   .elements {
-    max-width: 700px;
     margin: 0 auto;
     display: grid;
     grid-gap: 20px;
