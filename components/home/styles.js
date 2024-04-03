@@ -22,12 +22,28 @@ export const Wrapper = styled.div`
     margin-top: 10px;
   }
 
+  .elements {
+    max-width: 700px;
+    margin: 0 auto;
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: 345px 500px;
+    margin-top: 40px;
+  }
+
   .cards {
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(3, 345px);
     grid-gap: 20px;
-    margin-top: 40px;
+    margin-top: 20px;
+  }
+
+  .leaderboard {
+    display: flex;
+    justify-content: center;
+    max-height: 500px;
+    overflow-y: auto;
   }
 `;
 

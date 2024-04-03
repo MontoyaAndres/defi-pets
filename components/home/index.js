@@ -1,10 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, Fragment } from "react";
 import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import Divider from "@mui/material/Divider";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemAvatar from "@mui/material/ListItemAvatar";
+import Avatar from "@mui/material/Avatar";
 
 import { Wrapper } from "./styles";
 
@@ -66,6 +72,85 @@ export const Home = (props) => {
           right to name the pet and participate in various activities.
         </Typography>
       </div>
+      <div className="elements">
+        <div className="element">
+          <Card sx={{ maxWidth: 345 }}>
+            <CardMedia
+              sx={{ height: 361 }}
+              image="/photo_4931793251464228547_x.jpg"
+              title="green iguana"
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5" component="div">
+                Egg
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Lizards are a widespread group of squamate reptiles, with over
+                6,000 species, ranging across all continents except Antarctica
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Button
+                size="small"
+                color="secondary"
+                style={{ fontWeight: 500 }}
+              >
+                Mint
+              </Button>
+            </CardActions>
+          </Card>
+        </div>
+        <div>
+          <Typography
+            gutterBottom
+            variant="h5"
+            component="div"
+            style={{ fontWeight: 600 }}
+          >
+            Top 10 DeFi-Pets
+          </Typography>
+          <div className="leaderboard">
+            <List sx={{ bgcolor: "background.paper" }}>
+              {new Array(10).fill(null).map((_, index) => (
+                <>
+                  <ListItem alignItems="flex-start">
+                    <ListItemAvatar>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Brunch this weekend?"
+                      secondary={
+                        <Fragment>
+                          <Typography
+                            sx={{ display: "inline" }}
+                            component="span"
+                            variant="body2"
+                            color="text.primary"
+                          >
+                            Ali Connors
+                          </Typography>
+                          {
+                            " — I'll be in your neighborhood doing errands this…"
+                          }
+                        </Fragment>
+                      }
+                    />
+                  </ListItem>
+                  <Divider variant="inset" component="li" />
+                </>
+              ))}
+            </List>
+          </div>
+        </div>
+      </div>
+      <div className="titles">
+        <Typography variant="h4" className="title">
+          My DeFi Pets
+        </Typography>
+      </div>
       <div className="cards">
         {new Array(6).fill(0).map((_, index) => (
           <Card sx={{ maxWidth: 345 }} key={index}>
@@ -90,13 +175,6 @@ export const Home = (props) => {
                 style={{ fontWeight: 500 }}
               >
                 Mint
-              </Button>
-              <Button
-                size="small"
-                color="secondary"
-                style={{ fontWeight: 500 }}
-              >
-                Share
               </Button>
             </CardActions>
           </Card>
