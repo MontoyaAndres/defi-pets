@@ -52,10 +52,10 @@ export const Home = (props) => {
         const payload = {
           question: "",
           chat_history: [],
-          knowledge_source_id: process.env.FLOCK_API_ID,
+          knowledge_source_id: process.env.NEXT_PUBLIC_FLOCK_API_ID,
         };
         const headers = {
-          "x-api-key": process.env.FLOCK_API_KEY,
+          "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
         };
 
         const response = await axios.post(
