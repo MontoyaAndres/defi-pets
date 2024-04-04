@@ -1,4 +1,6 @@
 import { useEffect, Fragment, useState } from "react";
+import { useRouter } from 'next/router';
+import 'dotenv/config';
 import axios from "axios";
 import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
@@ -17,18 +19,24 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Slider from "@mui/material/Slider";
+import InvertColorsIcon from '@mui/icons-material/InvertColors';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 import { Wrapper } from "./styles";
+
+import { Database } from "@tableland/sdk";
 
 import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 
 export const Home = (props) => {
   const { walletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
-  const [mintAlready, setMintAlready] = useState(true);
+  const [currentPet, setCurrentPet] = useState({});
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("idle");
+  const { query } = useRouter();
 
   useEffect(() => {
     if (window.ethereum) {
@@ -47,8 +55,26 @@ export const Home = (props) => {
     }
   }, []);
 
+  const getPet = async (tokenId) => {
+    const db = new Database();
+    console.log('process.env.NEXT_PUBLIC_TABLELAND_NAME:', process.env.NEXT_PUBLIC_TABLELAND_NAME);
+    const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
+    const where = `WHERE id = '${tokenId}'`;
+    const statement = `${root} ${where}`;
+    const pets = await db.prepare(statement).all();
+    console.log('pets from db:', pets);
+    if (pets.results.length > 0) {
+      setCurrentPet(pets.results[0]);
+    }
+  }
+
+
   useEffect(() => {
     if (!window) return;
+    console.log('url query:', query);
+    //TODO: it fails:
+    const currentTokenId = parseInt(query.tokenId);
+    if (currentTokenId) getPet(currentTokenId);
 
     getDataModel(
       "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi.",
@@ -65,6 +91,7 @@ export const Home = (props) => {
       };
       const headers = {
         "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
+
       };
 
       const response = await axios.post(
@@ -84,10 +111,6 @@ export const Home = (props) => {
 
   const handleOpenDialog = (value) => {
     setOpenDialog(value);
-  };
-
-  const handleAlreadyMint = (value) => {
-    setMintAlready(value);
   };
 
   const handleSendMessage = async (message) => {
@@ -114,7 +137,7 @@ export const Home = (props) => {
     setMessage(event.target.value);
   };
 
-  async function mintPet() {
+  async function mintPet(name) {
     try {
       // create provider from Metamask
       const provider = new ethers.BrowserProvider(window.ethereum);
@@ -127,11 +150,12 @@ export const Home = (props) => {
         signer
       );
 
-      const tx = await contract.mintPet(walletAddress, "Pet Name");
+      const tx = await contract.mintPet(walletAddress, name);
       await tx.wait();
       const receipt = await provider.getTransactionReceipt(tx.hash);
       const tokenId = parseInt(receipt.logs[1].topics[3], 16);
-      console.log("new tokenId", tokenId); // This is the new tokenID, go to tokenPage
+      console.log("new tokenId", tokenId);
+      if (tokenId) getPet(tokenId);
     } catch (error) {
       console.error(error);
     }
@@ -154,14 +178,15 @@ export const Home = (props) => {
               if (!name) return;
 
               console.log(name);
+              mintPet(name)
               handleOpenDialog(false);
             },
           }}
         >
-          <DialogTitle>Mint pet</DialogTitle>
+          <DialogTitle>Mint a new DefiPet</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              Mint you pet here, enter the name of the pet
+              Assign a name for your pet:
             </DialogContentText>
             <TextField
               autoFocus
@@ -176,7 +201,7 @@ export const Home = (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => handleOpenDialog(false)}>Cancel</Button>
-            <Button type="submit">Save</Button>
+            <Button type="submit">Mint</Button>
           </DialogActions>
         </Dialog>
       )}
@@ -186,9 +211,7 @@ export const Home = (props) => {
             Welcome to DeFi Pets
           </Typography>
           <Typography variant="h6" className="description">
-            DeFi-Pets is a collection of 10,000 unique and adorable pets living
-            on the blockchain. Each pet is an NFT, and the owner of the NFT has
-            the right to name the pet and participate in various activities.
+            Unleash the power of DeFi through a world of playful pets, where nurturing your AI companion unlocks a universe of knowledge in decentralized finance.
           </Typography>
         </div>
         <div className="elements">
@@ -201,14 +224,41 @@ export const Home = (props) => {
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
-                  Egg
+                  {currentPet.id ? currentPet.name : "DefiPets are Fun!"}
                 </Typography>
+                {currentPet.id && (
+                  <>
+                    <Typography gutterBottom variant="h6" component="div">
+                      <InvertColorsIcon /> Health:
+                      <Slider
+                        marks={[
+                          {
+                            value: 0,
+                            label: '0%',
+                          },
+                          {
+                            value: 100,
+                            label: '100%',
+                          },
+                        ]}
+                        aria-label="Health"
+                        step={null}
+                        defaultValue={currentPet.health}
+                        valueLabelDisplay="auto"
+                        color="secondary"
+                      />
+                    </Typography>
+
+                    <Typography gutterBottom variant="h6" component="div">
+                      <EmojiEventsIcon /> Points: {currentPet.points}
+                    </Typography>
+                  </>
+                )}
                 <Typography variant="body2" color="text.secondary">
-                  Lizards are a widespread group of squamate reptiles, with over
-                  6,000 species, ranging across all continents except Antarctica
+                  Each DeFi action (Deposits, Stakes, Rewards) correlates with pet care tasks (Feeding, Training, Rewarding), influencing your pet's health and happiness.
                 </Typography>
               </CardContent>
-              {mintAlready ? (
+              {currentPet.id ? (
                 <CardActions>
                   <Button
                     size="small"
@@ -253,7 +303,7 @@ export const Home = (props) => {
               )}
             </Card>
           </div>
-          {mintAlready ? (
+          {currentPet.id ? (
             <div className="chat">
               <div className="chat-box">
                 <p className="ai">Hello I'm an AI system</p>
@@ -318,7 +368,7 @@ export const Home = (props) => {
             </div>
           )}
         </div>
-        {mintAlready && (
+        {currentPet && (
           <div className="subelements">
             <Typography
               gutterBottom

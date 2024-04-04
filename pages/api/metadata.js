@@ -57,7 +57,7 @@ export default async function handler(req, res) {
       name: pet.name,
       description: `DeFi Pets #${tokenId}`,
       image_data: image,
-      external_url: 'https://krebit-challenge.vercel.app?tokenId=${tokenId}',
+      external_url: `https://krebit-challenge.vercel.app?tokenId=${tokenId}`,
       attributes: [
         { trait_type: 'Owner', value: pet.owner },
         { trait_type: 'Points', value: pet.points },

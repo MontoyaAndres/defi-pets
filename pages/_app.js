@@ -82,6 +82,15 @@ export default function MyApp(props) {
               <Typography variant="h6" noWrap component="div">
                 DeFi-Pets
               </Typography>
+              <Typography variant="body1" noWrap>
+              <HomeIcon />Home
+              </Typography>
+              <Typography variant="body1" noWrap>
+              <FlagIcon />Leaderboard
+              </Typography>
+              <Typography variant="body1" noWrap>
+              <PetsIcon />My Pets
+              </Typography>
               {walletAddress ? (
                 <Typography variant="body1" noWrap>
                   {walletAddress}
@@ -98,41 +107,6 @@ export default function MyApp(props) {
               )}
             </Toolbar>
           </AppBar>
-          <Drawer
-            variant="permanent"
-            sx={{
-              width: 240,
-              flexShrink: 0,
-              [`& .MuiDrawer-paper`]: {
-                width: 240,
-                boxSizing: "border-box",
-              },
-            }}
-          >
-            <Toolbar />
-            <Box sx={{ overflow: "auto" }}>
-              <List>
-                {["Home", "Leaderboard", "DeFi-Pets"].map((text, index) => (
-                  <Link
-                    href={text === "Home" ? "/" : `/${text.toLowerCase()}`}
-                    style={{ textDecoration: "initial", color: "initial" }}
-                    key={text}
-                  >
-                    <ListItem disablePadding>
-                      <ListItemButton>
-                        <ListItemIcon>
-                          {text === "Home" && <HomeIcon />}
-                          {text === "Leaderboard" && <FlagIcon />}
-                          {text === "DeFi-Pets" && <PetsIcon />}
-                        </ListItemIcon>
-                        <ListItemText primary={text} />
-                      </ListItemButton>
-                    </ListItem>
-                  </Link>
-                ))}
-              </List>
-            </Box>
-          </Drawer>
           <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
             <Toolbar />
             <Component
