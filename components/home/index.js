@@ -1,6 +1,6 @@
 import { useEffect, Fragment, useState } from "react";
-import { useRouter } from 'next/router';
-import 'dotenv/config';
+import { useRouter } from "next/router";
+import "dotenv/config";
 import axios from "axios";
 import { TextField, Button, Typography } from "@mui/material";
 import { ethers } from "ethers";
@@ -19,13 +19,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slider from "@mui/material/Slider";
-import EggIcon from '@mui/icons-material/Egg';
-import InvertColorsIcon from '@mui/icons-material/InvertColors';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import CookieIcon from '@mui/icons-material/Cookie';
-import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
-import WashIcon from '@mui/icons-material/Wash';
-import SchoolIcon from '@mui/icons-material/School';
+import EggIcon from "@mui/icons-material/Egg";
+import InvertColorsIcon from "@mui/icons-material/InvertColors";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
+import CookieIcon from "@mui/icons-material/Cookie";
+import SportsBaseballIcon from "@mui/icons-material/SportsBaseball";
+import WashIcon from "@mui/icons-material/Wash";
+import SchoolIcon from "@mui/icons-material/School";
 
 import { Wrapper } from "./styles";
 
@@ -34,7 +34,7 @@ const db = new Database();
 import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 
 export const Home = (props) => {
-  const { walletAddress } = props;
+  const { walletAddress, setWalletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
   const [currentPet, setCurrentPet] = useState({});
   const [myPets, setMyPets] = useState([]);
@@ -66,36 +66,35 @@ export const Home = (props) => {
     const where = `WHERE id = '${tokenId}'`;
     const statement = `${root} ${where}`;
     const pets = await db.prepare(statement).all();
-    console.log('single pet from db:', pets);
+    console.log("single pet from db:", pets);
     if (pets.results.length > 0) {
       setCurrentPet(pets.results[0]);
     }
-  }
+  };
 
   const getMyPets = async () => {
     const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
     const where = `WHERE owner = '${walletAddress}'`;
     const statement = `${root} ${where}`;
     const pets = await db.prepare(statement).all();
-    console.log('All my pets from db:', pets);
+    console.log("All my pets from db:", pets);
     if (pets.results.length > 0) {
       setMyPets(pets.results);
     }
-  }
+  };
 
   const getLeaders = async () => {
     const statement = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME} order by points desc limit 10`;
     const pets = await db.prepare(statement).all();
-    console.log('Point leaders from db:', pets);
+    console.log("Point leaders from db:", pets);
     if (pets.results.length > 0) {
       setLeaders(pets.results);
     }
-  }
+  };
 
   useEffect(() => {
     if (!window) return;
     getLeaders();
-
   }, []);
 
   useEffect(() => {
@@ -103,15 +102,12 @@ export const Home = (props) => {
     if (!query.tokenId) return;
     const currentTokenId = parseInt(query.tokenId);
     if (currentTokenId) getPet(currentTokenId);
-
   }, [query]);
 
   useEffect(() => {
     if (!window) return;
     getMyPets();
-
   }, [walletAddress]);
-
 
   useEffect(() => {
     if (!window) return;
@@ -131,7 +127,6 @@ export const Home = (props) => {
       };
       const headers = {
         "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
-
       };
 
       const response = await axios.post(
@@ -218,16 +213,14 @@ export const Home = (props) => {
               if (!name) return;
 
               console.log(name);
-              mintPet(name)
+              mintPet(name);
               handleOpenDialog(false);
             },
           }}
         >
           <DialogTitle>Mint a new DefiPet</DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Assign a name for your pet:
-            </DialogContentText>
+            <DialogContentText>Assign a name for your pet:</DialogContentText>
             <TextField
               autoFocus
               required
@@ -241,7 +234,10 @@ export const Home = (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => handleOpenDialog(false)}>Cancel</Button>
-            <Button type="submit"><EggIcon />Mint</Button>
+            <Button type="submit">
+              <EggIcon />
+              Mint
+            </Button>
           </DialogActions>
         </Dialog>
       )}
@@ -251,23 +247,60 @@ export const Home = (props) => {
             Welcome to DeFi Pets
           </Typography>
           <Typography variant="h6" className="description">
-            Unleash the power of DeFi through a world of playful pets, where nurturing your AI companion unlocks a universe of knowledge in decentralized finance.
+            Unleash the power of DeFi through a world of playful pets, where
+            nurturing your AI companion unlocks a universe of knowledge in
+            decentralized finance.
           </Typography>
 
           <ul>
-            <li>Arbitrum Contract: <a target="_blank" href="https://sepolia.arbiscan.io/address/0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b">0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b</a></li>
-            <li>Tableland Table: <a target="_blank" href="https://studio.tableland.xyz/table/defi_pets_421614_477">defi_pets_421614_477</a></li>
-            <li>Flock AI Model: <a target="_blank" href="https://beta.flock.io/model/cluhak6ok00a7d20crl7n6uh8">DeFiPets</a></li>
-            <li>Opensea: <a target="_blank" href="https://testnets.opensea.io/collection/defipets-1">DeFiPets</a></li>
+            <li>
+              Arbitrum Contract:{" "}
+              <a
+                target="_blank"
+                href="https://sepolia.arbiscan.io/address/0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b"
+              >
+                0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b
+              </a>
+            </li>
+            <li>
+              Tableland Table:{" "}
+              <a
+                target="_blank"
+                href="https://studio.tableland.xyz/table/defi_pets_421614_477"
+              >
+                defi_pets_421614_477
+              </a>
+            </li>
+            <li>
+              Flock AI Model:{" "}
+              <a
+                target="_blank"
+                href="https://beta.flock.io/model/cluhak6ok00a7d20crl7n6uh8"
+              >
+                DeFiPets
+              </a>
+            </li>
+            <li>
+              Opensea:{" "}
+              <a
+                target="_blank"
+                href="https://testnets.opensea.io/collection/defipets-1"
+              >
+                DeFiPets
+              </a>
+            </li>
           </ul>
-
         </div>
         <div className="elements">
           <div className="element">
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia
                 sx={{ height: 361 }}
-                image={currentPet && currentPet.id ? `/stage_${currentPet.evolutionStage}.jpg` : "/DeFiPets.gif"}
+                image={
+                  currentPet && currentPet.id
+                    ? `/stage_${currentPet.evolutionStage}.jpg`
+                    : "/DeFiPets.gif"
+                }
                 title="DeFiPet"
               />
               <CardContent>
@@ -280,16 +313,16 @@ export const Home = (props) => {
                       <EmojiEventsIcon /> Points: {currentPet.points}
                     </Typography>
                     <Typography gutterBottom variant="h6" component="div">
-                      <InvertColorsIcon /> Health:  {currentPet.health}
+                      <InvertColorsIcon /> Health: {currentPet.health}
                       <Slider
                         marks={[
                           {
                             value: 0,
-                            label: '0%',
+                            label: "0%",
                           },
                           {
                             value: 100,
-                            label: '100%',
+                            label: "100%",
                           },
                         ]}
                         aria-label="Health"
@@ -302,7 +335,9 @@ export const Home = (props) => {
                   </>
                 )}
                 <Typography variant="body2" color="text.secondary">
-                  Each DeFi action (Deposits, Stakes, Rewards) correlates with pet care tasks (Feeding, Training, Rewarding), influencing your pet's health and happiness.
+                  Each DeFi action (Deposits, Stakes, Rewards) correlates with
+                  pet care tasks (Feeding, Training, Rewarding), influencing
+                  your pet's health and happiness.
                 </Typography>
               </CardContent>
               {currentPet.id ? (
@@ -333,7 +368,8 @@ export const Home = (props) => {
                     color="secondary"
                     style={{ fontWeight: 500 }}
                   >
-                    <SportsBaseballIcon />Play
+                    <SportsBaseballIcon />
+                    Play
                   </Button>
                 </CardActions>
               ) : (
@@ -379,11 +415,58 @@ export const Home = (props) => {
               </Typography>
               <div className="leaderboard">
                 <List sx={{ bgcolor: "background.paper" }}>
-                  {leaders.length > 0 && leaders.map((leader, index) => (
+                  {leaders.length > 0 &&
+                    leaders.map((leader, index) => (
+                      <>
+                        <ListItem alignItems="flex-start" key={index}>
+                          <ListItemAvatar>
+                            #{index + 1}
+                            <EmojiEventsIcon />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={leader.name}
+                            secondary={
+                              <Fragment>
+                                <Typography
+                                  sx={{ display: "inline" }}
+                                  component="span"
+                                  variant="body2"
+                                  color="text.primary"
+                                >
+                                  Points: {leader.points}
+                                </Typography>
+                                &nbsp; - Owner: {leader.owner}
+                              </Fragment>
+                            }
+                          />
+                        </ListItem>
+                        <Divider variant="inset" component="li" />
+                      </>
+                    ))}
+                </List>
+              </div>
+            </div>
+          )}
+        </div>
+        {currentPet.id && (
+          <div className="subelements">
+            <Typography
+              gutterBottom
+              variant="h5"
+              component="div"
+              style={{ fontWeight: 600 }}
+            >
+              Top 10 DeFi-Pets
+            </Typography>
+            <div className="leaderboard">
+              <List sx={{ bgcolor: "background.paper" }}>
+                {leaders.length > 0 &&
+                  leaders.map((leader, index) => (
                     <>
-                      <ListItem alignItems="flex-start" key={index}>
+                      <ListItem alignItems="flex-start">
                         <ListItemAvatar>
-                          #{index + 1}<EmojiEventsIcon />
+                          #{index + 1}
+                          <EmojiEventsIcon />
                         </ListItemAvatar>
                         <ListItemText
                           primary={leader.name}
@@ -405,49 +488,6 @@ export const Home = (props) => {
                       <Divider variant="inset" component="li" />
                     </>
                   ))}
-                </List>
-              </div>
-            </div>
-          )}
-        </div>
-        {currentPet.id && (
-          <div className="subelements">
-            <Typography
-              gutterBottom
-              variant="h5"
-              component="div"
-              style={{ fontWeight: 600 }}
-            >
-              Top 10 DeFi-Pets
-            </Typography>
-            <div className="leaderboard">
-              <List sx={{ bgcolor: "background.paper" }}>
-                {leaders.length > 0 && leaders.map((leader, index) => (
-                  <>
-                    <ListItem alignItems="flex-start">
-                      <ListItemAvatar>
-                        #{index + 1}<EmojiEventsIcon />
-                      </ListItemAvatar>
-                      <ListItemText
-                        primary={leader.name}
-                        secondary={
-                          <Fragment>
-                            <Typography
-                              sx={{ display: "inline" }}
-                              component="span"
-                              variant="body2"
-                              color="text.primary"
-                            >
-                              Points: {leader.points}
-                            </Typography>
-                            &nbsp; - Owner: {leader.owner}
-                          </Fragment>
-                        }
-                      />
-                    </ListItem>
-                    <Divider variant="inset" component="li" />
-                  </>
-                ))}
               </List>
             </div>
           </div>
@@ -460,55 +500,56 @@ export const Home = (props) => {
               </Typography>
             </div>
             <div className="cards">
-              {myPets.length > 0 && myPets.map((myPet, index) => (
-                <Card sx={{ maxWidth: 345 }} key={index}>
-                  <CardMedia
-                    sx={{ height: 140 }}
-                    image={"/stage_" + myPet.evolutionStage + ".jpg"}
-                    title={myPet.name}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {myPet.name}
-                    </Typography>
-                    <Typography gutterBottom variant="h6" component="div">
-                      <EmojiEventsIcon /> Points: {myPet.points}
-                    </Typography>
-                    <Typography gutterBottom variant="h6" component="div">
-                      <InvertColorsIcon /> Health: {myPet.health}
-                      <Slider
-                        marks={[
-                          {
-                            value: 0,
-                            label: '0%',
-                          },
-                          {
-                            value: 100,
-                            label: '100%',
-                          },
-                        ]}
-                        aria-label="Health"
-                        step={null}
-                        defaultValue={myPet.health}
-                        valueLabelDisplay="auto"
+              {myPets.length > 0 &&
+                myPets.map((myPet, index) => (
+                  <Card sx={{ maxWidth: 345 }} key={index}>
+                    <CardMedia
+                      sx={{ height: 140 }}
+                      image={"/stage_" + myPet.evolutionStage + ".jpg"}
+                      title={myPet.name}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {myPet.name}
+                      </Typography>
+                      <Typography gutterBottom variant="h6" component="div">
+                        <EmojiEventsIcon /> Points: {myPet.points}
+                      </Typography>
+                      <Typography gutterBottom variant="h6" component="div">
+                        <InvertColorsIcon /> Health: {myPet.health}
+                        <Slider
+                          marks={[
+                            {
+                              value: 0,
+                              label: "0%",
+                            },
+                            {
+                              value: 100,
+                              label: "100%",
+                            },
+                          ]}
+                          aria-label="Health"
+                          step={null}
+                          defaultValue={myPet.health}
+                          valueLabelDisplay="auto"
+                          color="secondary"
+                        />
+                      </Typography>
+                    </CardContent>
+                    <CardActions>
+                      <Button
+                        size="small"
                         color="secondary"
-                      />
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button
-                      size="small"
-                      color="secondary"
-                      style={{ fontWeight: 500 }}
-                      onClick={() => {
-                        setCurrentPet(myPet.id)
-                      }}
-                    >
-                      Select
-                    </Button>
-                  </CardActions>
-                </Card>
-              ))}
+                        style={{ fontWeight: 500 }}
+                        onClick={() => {
+                          setCurrentPet(myPet.id);
+                        }}
+                      >
+                        Select
+                      </Button>
+                    </CardActions>
+                  </Card>
+                ))}
             </div>
           </>
         )}

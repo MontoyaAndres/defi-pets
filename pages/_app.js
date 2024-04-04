@@ -83,14 +83,17 @@ export default function MyApp(props) {
                 DeFi-Pets
               </Typography>
               <Typography variant="body1" noWrap>
-                <HomeIcon />Home
+                <HomeIcon />
+                Home
               </Typography>
               <Typography variant="body1" noWrap>
-                <FlagIcon />Leaderboard
+                <FlagIcon />
+                Leaderboard
               </Typography>
               {walletAddress && (
                 <Typography variant="body1" noWrap>
-                  <PetsIcon />My Pets
+                  <PetsIcon />
+                  My Pets
                 </Typography>
               )}
               {walletAddress ? (
@@ -115,6 +118,7 @@ export default function MyApp(props) {
               {...pageProps}
               connectWallet={connectWallet}
               walletAddress={walletAddress}
+              setWalletAddress={setWalletAddress}
             />
           </Box>
         </Box>
