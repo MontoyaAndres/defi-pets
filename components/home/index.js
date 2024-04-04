@@ -13,15 +13,19 @@ import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemAvatar from "@mui/material/ListItemAvatar";
-import Avatar from "@mui/material/Avatar";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slider from "@mui/material/Slider";
+import EggIcon from '@mui/icons-material/Egg';
 import InvertColorsIcon from '@mui/icons-material/InvertColors';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CookieIcon from '@mui/icons-material/Cookie';
+import SportsBaseballIcon from '@mui/icons-material/SportsBaseball';
+import WashIcon from '@mui/icons-material/Wash';
+import SchoolIcon from '@mui/icons-material/School';
 
 import { Wrapper } from "./styles";
 
@@ -33,6 +37,7 @@ export const Home = (props) => {
   const { walletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
   const [currentPet, setCurrentPet] = useState({});
+  const [myPets, setMyPets] = useState([]);
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("idle");
@@ -57,24 +62,48 @@ export const Home = (props) => {
 
   const getPet = async (tokenId) => {
     const db = new Database();
-    console.log('process.env.NEXT_PUBLIC_TABLELAND_NAME:', process.env.NEXT_PUBLIC_TABLELAND_NAME);
     const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
     const where = `WHERE id = '${tokenId}'`;
     const statement = `${root} ${where}`;
     const pets = await db.prepare(statement).all();
-    console.log('pets from db:', pets);
+    console.log('single pet from db:', pets);
     if (pets.results.length > 0) {
       setCurrentPet(pets.results[0]);
     }
   }
 
+  const getMyPets = async () => {
+    const db = new Database();
+    const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
+    const where = `WHERE owner = '${walletAddress}'`;
+    const statement = `${root} ${where}`;
+    const pets = await db.prepare(statement).all();
+    console.log('All my pets from db:', pets);
+    if (pets.results.length > 0) {
+      setMyPets(pets.results);
+    }
+  }
 
   useEffect(() => {
     if (!window) return;
     console.log('url query:', query);
     //TODO: it fails:
-    const currentTokenId = parseInt(query.tokenId);
+    //const currentTokenId = parseInt(query.tokenId);
+    const currentTokenId = 1;
     if (currentTokenId) getPet(currentTokenId);
+
+
+  }, []);
+
+  useEffect(() => {
+    if (!window) return;
+    getMyPets();
+
+  }, [walletAddress]);
+
+
+  useEffect(() => {
+    if (!window) return;
 
     getDataModel(
       "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi.",
@@ -201,7 +230,7 @@ export const Home = (props) => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => handleOpenDialog(false)}>Cancel</Button>
-            <Button type="submit">Mint</Button>
+            <Button type="submit"><EggIcon />Mint</Button>
           </DialogActions>
         </Dialog>
       )}
@@ -212,6 +241,14 @@ export const Home = (props) => {
           </Typography>
           <Typography variant="h6" className="description">
             Unleash the power of DeFi through a world of playful pets, where nurturing your AI companion unlocks a universe of knowledge in decentralized finance.
+            </Typography>
+            <Typography variant="body2" color="text.secondary"><ul>
+              <li>Arbitrum Contract: <a target="_blank" href="https://sepolia.arbiscan.io/address/0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b">0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b</a></li>
+              <li>Tableland Table: <a target="_blank" href="https://studio.tableland.xyz/table/defi_pets_421614_477">defi_pets_421614_477</a></li>
+              <li>Flock AI Model: <a target="_blank" href="https://beta.flock.io/model/cluhak6ok00a7d20crl7n6uh8">DeFiPets</a></li>
+              <li>Opensea: <a target="_blank" href="https://testnets.opensea.io/collection/defipets-1">DeFiPets</a></li>
+              </ul>
+
           </Typography>
         </div>
         <div className="elements">
@@ -219,7 +256,7 @@ export const Home = (props) => {
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia
                 sx={{ height: 361 }}
-                image="/photo_4931793251464228547_x.jpg"
+                image={"/stage_" + (currentPet.id ? currentPet.evolutionStage : 0) + ".jpg"}
                 title="green iguana"
               />
               <CardContent>
@@ -228,6 +265,9 @@ export const Home = (props) => {
                 </Typography>
                 {currentPet.id && (
                   <>
+                    <Typography gutterBottom variant="h6" component="div">
+                      <EmojiEventsIcon /> Points: {currentPet.points}
+                    </Typography>
                     <Typography gutterBottom variant="h6" component="div">
                       <InvertColorsIcon /> Health:
                       <Slider
@@ -248,10 +288,6 @@ export const Home = (props) => {
                         color="secondary"
                       />
                     </Typography>
-
-                    <Typography gutterBottom variant="h6" component="div">
-                      <EmojiEventsIcon /> Points: {currentPet.points}
-                    </Typography>
                   </>
                 )}
                 <Typography variant="body2" color="text.secondary">
@@ -265,28 +301,28 @@ export const Home = (props) => {
                     color="secondary"
                     style={{ fontWeight: 500 }}
                   >
-                    Feed
+                    <CookieIcon /> Feed
                   </Button>
                   <Button
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
                   >
-                    Train
+                    <SchoolIcon /> Train
                   </Button>
                   <Button
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
                   >
-                    Clean
+                    <WashIcon /> Clean
                   </Button>
                   <Button
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
                   >
-                    Play
+                    <SportsBaseballIcon />Play
                   </Button>
                 </CardActions>
               ) : (
@@ -336,10 +372,7 @@ export const Home = (props) => {
                     <>
                       <ListItem alignItems="flex-start">
                         <ListItemAvatar>
-                          <Avatar
-                            alt="Remy Sharp"
-                            src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
-                          />
+                          <EmojiEventsIcon />
                         </ListItemAvatar>
                         <ListItemText
                           primary="Brunch this weekend?"
@@ -368,7 +401,7 @@ export const Home = (props) => {
             </div>
           )}
         </div>
-        {currentPet && (
+        {currentPet.id && (
           <div className="subelements">
             <Typography
               gutterBottom
@@ -384,10 +417,7 @@ export const Home = (props) => {
                   <>
                     <ListItem alignItems="flex-start">
                       <ListItemAvatar>
-                        <Avatar
-                          alt="Remy Sharp"
-                          src="https://cdn-icons-png.flaticon.com/512/5957/5957125.png"
-                        />
+                        <EmojiEventsIcon />
                       </ListItemAvatar>
                       <ListItemText
                         primary="Brunch this weekend?"
@@ -415,43 +445,45 @@ export const Home = (props) => {
             </div>
           </div>
         )}
-        <div className="titles">
-          <Typography variant="h4" className="title">
-            My DeFi Pets
-          </Typography>
-        </div>
-        <div className="cards">
-          {new Array(6).fill(0).map((_, index) => (
-            <Card sx={{ maxWidth: 345 }} key={index}>
-              <CardMedia
-                sx={{ height: 140 }}
-                image="/photo_4931793251464228547_x.jpg"
-                title="green iguana"
-              />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                  Egg
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Lizards are a widespread group of squamate reptiles, with over
-                  6,000 species, ranging across all continents except Antarctica
-                </Typography>
-              </CardContent>
-              <CardActions>
-                <Button
-                  size="small"
-                  color="secondary"
-                  style={{ fontWeight: 500 }}
-                  onClick={() => {
-                    console.log("jhey");
-                  }}
-                >
-                  Open in Open sea
-                </Button>
-              </CardActions>
-            </Card>
-          ))}
-        </div>
+        {myPets.length > 0 && (
+          <>
+            <div className="titles">
+              <Typography variant="h4" className="title">
+                My DeFi Pets
+              </Typography>
+            </div>
+            <div className="cards">
+              {myPets.map((_, index) => (
+                <Card sx={{ maxWidth: 345 }} key={index}>
+                  <CardMedia
+                    sx={{ height: 140 }}
+                    image={"/stage_" + index + ".jpg"}
+                    title="green iguana"
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      Pet-{index}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      size="small"
+                      color="secondary"
+                      style={{ fontWeight: 500 }}
+                      onClick={() => {
+                        setCurrentPet(index)
+                      }}
+                    >
+                      Select
+                    </Button>
+                  </CardActions>
+                </Card>
+              ))}
+            </div>
+          </>
+        )}
       </Wrapper>
     </>
   );
