@@ -77,23 +77,39 @@ export default function MyApp(props) {
             sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
           >
             <Toolbar
-              style={{ display: "flex", justifyContent: "space-between" }}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
               <Typography variant="h6" noWrap component="div">
                 DeFi-Pets
               </Typography>
-              <Typography variant="body1" noWrap>
+              <Typography
+                variant="body1"
+                noWrap
+                style={{ display: "flex", alignItems: "center" }}
+              >
                 <HomeIcon />
-                Home
+                <span style={{ marginLeft: 8 }}>Home</span>
               </Typography>
-              <Typography variant="body1" noWrap>
+              <Typography
+                variant="body1"
+                noWrap
+                style={{ display: "flex", alignItems: "center" }}
+              >
                 <FlagIcon />
-                Leaderboard
+                <span style={{ marginLeft: 8 }}>Leaderboard</span>
               </Typography>
               {walletAddress && (
-                <Typography variant="body1" noWrap>
+                <Typography
+                  variant="body1"
+                  noWrap
+                  style={{ display: "flex", alignItems: "center" }}
+                >
                   <PetsIcon />
-                  My Pets
+                  <span style={{ marginLeft: 8 }}>My Pets</span>
                 </Typography>
               )}
               {walletAddress ? (

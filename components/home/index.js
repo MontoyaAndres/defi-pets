@@ -26,6 +26,8 @@ import CookieIcon from "@mui/icons-material/Cookie";
 import SportsBaseballIcon from "@mui/icons-material/SportsBaseball";
 import WashIcon from "@mui/icons-material/Wash";
 import SchoolIcon from "@mui/icons-material/School";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 import { Wrapper } from "./styles";
 
@@ -42,6 +44,7 @@ export const Home = (props) => {
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("idle");
+  const [tokenPetId, setTokenPetId] = useState(null);
   const { query } = useRouter();
 
   useEffect(() => {
@@ -190,6 +193,7 @@ export const Home = (props) => {
       const receipt = await provider.getTransactionReceipt(tx.hash);
       const tokenId = parseInt(receipt.logs[1].topics[3], 16);
       console.log("new tokenId", tokenId);
+      setTokenPetId(tokenId);
       if (tokenId) getPet(tokenId);
     } catch (error) {
       console.error(error);
@@ -198,6 +202,20 @@ export const Home = (props) => {
 
   return (
     <>
+      <Snackbar
+        open={Boolean(tokenPetId)}
+        autoHideDuration={6000}
+        onClose={() => setTokenPetId(null)}
+      >
+        <Alert
+          onClose={() => setTokenPetId(null)}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          Your DeFiPet was minted successfully! Token ID: {tokenPetId}
+        </Alert>
+      </Snackbar>
       {openDialog && (
         <Dialog
           open={open}
@@ -419,7 +437,13 @@ export const Home = (props) => {
                     leaders.map((leader, index) => (
                       <>
                         <ListItem alignItems="flex-start" key={index}>
-                          <ListItemAvatar>
+                          <ListItemAvatar
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              alignSelf: "center",
+                            }}
+                          >
                             #{index + 1}
                             <EmojiEventsIcon />
                           </ListItemAvatar>
@@ -464,7 +488,13 @@ export const Home = (props) => {
                   leaders.map((leader, index) => (
                     <>
                       <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
+                        <ListItemAvatar
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            alignSelf: "center",
+                          }}
+                        >
                           #{index + 1}
                           <EmojiEventsIcon />
                         </ListItemAvatar>
