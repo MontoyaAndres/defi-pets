@@ -94,15 +94,17 @@ export const Home = (props) => {
 
   useEffect(() => {
     if (!window) return;
-    console.log('url query:', query);
-    //TODO: it fails:
-    const currentTokenId = parseInt(query.tokenId);
-    //const currentTokenId = 1;
-    if (currentTokenId) getPet(currentTokenId);
-
     getLeaders();
 
   }, []);
+
+  useEffect(() => {
+    if (!window) return;
+    if (!query.tokenId) return;
+    const currentTokenId = parseInt(query.tokenId);
+    if (currentTokenId) getPet(currentTokenId);
+
+  }, [query]);
 
   useEffect(() => {
     if (!window) return;
