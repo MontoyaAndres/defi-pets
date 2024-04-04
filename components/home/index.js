@@ -265,8 +265,8 @@ export const Home = (props) => {
             <Card sx={{ maxWidth: 345 }}>
               <CardMedia
                 sx={{ height: 361 }}
-                image={"/stage_" + (currentPet.id ? currentPet.evolutionStage : 0) + ".jpg"}
-                title="green iguana"
+                image={currentPet && currentPet.id ? `/stage_${currentPet.evolutionStage}.jpg` : "/DeFiPets.gif"}
+                title="DeFiPet"
               />
               <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
@@ -462,7 +462,7 @@ export const Home = (props) => {
                 <Card sx={{ maxWidth: 345 }} key={index}>
                   <CardMedia
                     sx={{ height: 140 }}
-                    image={"/stage_" + index + ".jpg"}
+                    image={"/stage_" + myPet.evolutionStage + ".jpg"}
                     title={myPet.name}
                   />
                   <CardContent>
