@@ -28,6 +28,7 @@ import WashIcon from "@mui/icons-material/Wash";
 import SchoolIcon from "@mui/icons-material/School";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { Wrapper } from "./styles";
@@ -39,6 +40,7 @@ import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 export const Home = (props) => {
   const { walletAddress, setWalletAddress } = props;
   const [openDialog, setOpenDialog] = useState(false);
+  const [openUpdateDialog, setOpenUpdateDialog] = useState(false);
   const [currentPet, setCurrentPet] = useState({});
   const [myPets, setMyPets] = useState([]);
   const [leaders, setLeaders] = useState([]);
@@ -46,6 +48,7 @@ export const Home = (props) => {
   const [message, setMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("idle");
   const [tokenPetId, setTokenPetId] = useState(null);
+  const [updatedData, setUpdatedData] = useState(null);
   const { query } = useRouter();
 
   useEffect(() => {
@@ -152,6 +155,23 @@ export const Home = (props) => {
 
   const handleOpenDialog = (value) => {
     setOpenDialog(value);
+  };
+
+  const updatePet = async (tokenId) => {
+    try {
+      
+      const response = await axios.get(`/api/update?tokenId=${currentPet.id}`);
+
+      console.log('update response: ', response)
+      setUpdatedData(JSON.stringify(response.data))
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleOpenUpdateDialog = (value) => {
+    setOpenUpdateDialog(value);
   };
 
   const handleSendMessage = async (message) => {
@@ -263,6 +283,81 @@ export const Home = (props) => {
           </DialogActions>
         </Dialog>
       )}
+      {openUpdateDialog && (
+        <Dialog
+          open={open}
+          onClose={() => handleOpenDialog(false)}
+        >
+          <DialogTitle>Update your DefiPet</DialogTitle>
+            {updatedData ? (
+            <DialogContent>
+              <DialogContentText>Validated on Zerion: {updatedData}</DialogContentText>
+            </DialogContent>
+            ) : (
+            <DialogContent>
+            <DialogContentText>DeFi actions you can perform and then validate to play with your pet:</DialogContentText>
+            <ul>
+          <li>
+          Feed:{" "}
+              <a
+                target="_blank"
+                href="https://aave.com/"
+              >
+                Deposit on Aave
+              </a>
+            </li>
+            <li>
+            Train:{" "}
+              <a
+                target="_blank"
+                href="https://sushi.com/"
+              >
+                SushiSwap
+              </a>
+            </li>
+            <li>
+            Clean:{" "}
+              <a
+                target="_blank"
+                href="https://curve.fi/"
+              >
+                Curve Finance
+              </a>
+            </li>
+            <li>
+            Play:{" "}
+              <a
+                target="_blank"
+                href="https://balancer.fi/"
+              >
+                Balancer
+              </a>
+            </li>
+            <li>
+            Monitor:{" "}
+              <a
+                target="_blank"
+                href={"https://app.zerion.io/"+walletAddress+"/overview"}
+              >
+                Zerion
+              </a>
+            </li>
+          </ul>
+          
+          </DialogContent>
+          )}
+          <DialogActions>
+            <Button onClick={() => handleOpenUpdateDialog(false)}>Cancel</Button>
+            <Button onClick={async () => {
+              await updatePet();
+              
+            }}>
+              <PublishedWithChangesIcon />
+              Validate
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
       <Wrapper>
         <div className="titles">
           <Typography variant="h4" className="title">
@@ -275,6 +370,15 @@ export const Home = (props) => {
           </Typography>
 
           <ul>
+          <li>
+              Github:{" "}
+              <a
+                target="_blank"
+                href="https://github.com/MontoyaAndres/defi-pets"
+              >
+                defi-pets
+              </a>
+            </li>
             <li>
               Arbitrum Contract:{" "}
               <a
@@ -368,6 +472,7 @@ export const Home = (props) => {
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
+                    onClick={() => handleOpenUpdateDialog(true)}
                   >
                     <CookieIcon /> Feed
                   </Button>
@@ -375,6 +480,7 @@ export const Home = (props) => {
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
+                    onClick={() => handleOpenUpdateDialog(true)}
                   >
                     <SchoolIcon /> Train
                   </Button>
@@ -382,6 +488,7 @@ export const Home = (props) => {
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
+                    onClick={() => handleOpenUpdateDialog(true)}
                   >
                     <WashIcon /> Clean
                   </Button>
@@ -389,6 +496,7 @@ export const Home = (props) => {
                     size="small"
                     color="secondary"
                     style={{ fontWeight: 500 }}
+                    onClick={() => handleOpenUpdateDialog(true)}
                   >
                     <SportsBaseballIcon />
                     Play
