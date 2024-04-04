@@ -94,7 +94,6 @@ export default async function handler(req, res) {
   // 0) Get current Pet metadata
   const pet = await getPet(tokenId);
 
-  //TODO:  
   if (pet) {
     // 1) Call getGuildRoles(pet.owner) 
 
@@ -138,7 +137,7 @@ export default async function handler(req, res) {
     // 4) Update table via contract or tableland SDK
     const updated = await updatePet(tokenNumber,updatedPoints,updatedHealth,updatedEvolutionStage);
 
-    return res.json(newAttributes);
+    return res.json({...newAttributes,...defiActivity});
   }
 
 
