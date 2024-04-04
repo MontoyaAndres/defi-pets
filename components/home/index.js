@@ -28,6 +28,7 @@ import WashIcon from "@mui/icons-material/Wash";
 import SchoolIcon from "@mui/icons-material/School";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { Wrapper } from "./styles";
 
@@ -72,6 +73,8 @@ export const Home = (props) => {
     console.log("single pet from db:", pets);
     if (pets.results.length > 0) {
       setCurrentPet(pets.results[0]);
+      setHistory([]);
+      setMessage("");
     }
   };
 
@@ -114,34 +117,34 @@ export const Home = (props) => {
 
   useEffect(() => {
     if (!window) return;
+    if (!walletAddress) return;
+    if (!currentPet?.id) return;
 
-    getDataModel(
-      "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi.",
-      []
-    );
-  }, []);
+    const getDataChat = async () => {
+      const response = await getDataModel(
+        "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi."
+      );
 
-  const getDataModel = async (message, history = []) => {
+      setHistory((prevValues) => [
+        ...prevValues,
+        { message: response.answer, type: "ai" },
+      ]);
+    };
+
+    getDataChat();
+  }, [walletAddress, currentPet]);
+
+  const getDataModel = async (message, history) => {
     try {
+      setStatusMessage("loading");
       const payload = {
         question: message,
         chat_history: history,
-        knowledge_source_id: process.env.NEXT_PUBLIC_FLOCK_API_ID,
       };
-      const headers = {
-        "x-api-key": process.env.NEXT_PUBLIC_FLOCK_API_KEY,
-      };
+      const response = await axios.post(`/api/bot`, payload);
 
-      const response = await axios.post(
-        `https://rag-chat-ml-backend-prod.flock.io/chat/conversational_rag_chat`,
-        payload,
-        {
-          headers,
-        }
-      );
-
-      // TODO: set here history for first message
-      console.log(response);
+      setStatusMessage("idle");
+      return response.data;
     } catch (error) {
       console.error(error);
     }
@@ -155,13 +158,14 @@ export const Home = (props) => {
     setHistory((prevValues) => [...prevValues, { message, type: "user" }]);
     setMessage("");
 
-    setStatusMessage("loading");
-    const aiResponse = await getDataModel(
-      message,
-      history.map((item) => item.message)
-    );
-    // TODO: save ai response in history
-    setStatusMessage("idle");
+    const response = await getDataModel(message, [
+      ...history,
+      { message, type: "user" },
+    ]);
+    setHistory((prevValues) => [
+      ...prevValues,
+      { message: response.answer, type: "ai" },
+    ]);
   };
 
   const handleMessage = (event) => {
@@ -407,11 +411,38 @@ export const Home = (props) => {
           {currentPet.id ? (
             <div className="chat">
               <div className="chat-box">
-                <p className="ai">Hello I'm an AI system</p>
-                <p className="user">Hello I'm an user from the Dark web</p>
-                <p className="ai">Hello I'm an AI system</p>
-                <p className="user">Hello I'm an user from the Dark web</p>
-                <p className="ai">Hello I'm an AI system</p>
+                {history.map((item, index) => (
+                  <p key={index} className={item.type}>
+                    {item.message}
+                  </p>
+                ))}
+                {statusMessage === "loading" && (
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <svg width={0} height={0}>
+                      <defs>
+                        <linearGradient
+                          id="my_gradient"
+                          x1="0%"
+                          y1="0%"
+                          x2="0%"
+                          y2="100%"
+                        >
+                          <stop offset="0%" stopColor="#e01cd5" />
+                          <stop offset="100%" stopColor="#1CB5E0" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <CircularProgress
+                      sx={{ "svg circle": { stroke: "url(#my_gradient)" } }}
+                    />
+                  </div>
+                )}
               </div>
               <TextField
                 className="input"
@@ -572,7 +603,11 @@ export const Home = (props) => {
                         color="secondary"
                         style={{ fontWeight: 500 }}
                         onClick={() => {
-                          setCurrentPet(myPet.id);
+                          if (myPet.id === currentPet.id) return;
+
+                          setCurrentPet(myPet);
+                          setHistory([]);
+                          setMessage("");
                         }}
                       >
                         Select

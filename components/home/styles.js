@@ -56,6 +56,8 @@ export const Wrapper = styled.div`
   }
 
   .chat {
+    height: 705px;
+
     .chat-box {
       border: 1px solid rgba(0, 0, 0, 0.23);
       height: calc(100% - 56px);
