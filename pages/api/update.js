@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { Database } from "@tableland/sdk";
 import { Wallet, getDefaultProvider, Contract } from "ethers";
 import defiPets from '../../schemas/defiPets.json' assert { type: 'json' };
