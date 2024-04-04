@@ -30,7 +30,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import { Wrapper } from "./styles";
 
 import { Database } from "@tableland/sdk";
-
+const db = new Database();
 import defiPets from "../../schemas/defiPets.json" assert { type: "json" };
 
 export const Home = (props) => {
@@ -38,6 +38,7 @@ export const Home = (props) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [currentPet, setCurrentPet] = useState({});
   const [myPets, setMyPets] = useState([]);
+  const [leaders, setLeaders] = useState([]);
   const [history, setHistory] = useState([]);
   const [message, setMessage] = useState("");
   const [statusMessage, setStatusMessage] = useState("idle");
@@ -61,7 +62,6 @@ export const Home = (props) => {
   }, []);
 
   const getPet = async (tokenId) => {
-    const db = new Database();
     const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
     const where = `WHERE id = '${tokenId}'`;
     const statement = `${root} ${where}`;
@@ -73,7 +73,6 @@ export const Home = (props) => {
   }
 
   const getMyPets = async () => {
-    const db = new Database();
     const root = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME}`;
     const where = `WHERE owner = '${walletAddress}'`;
     const statement = `${root} ${where}`;
@@ -84,14 +83,24 @@ export const Home = (props) => {
     }
   }
 
+  const getLeaders = async () => {
+    const statement = `SELECT * FROM ${process.env.NEXT_PUBLIC_TABLELAND_NAME} order by points desc limit 10`;
+    const pets = await db.prepare(statement).all();
+    console.log('Point leaders from db:', pets);
+    if (pets.results.length > 0) {
+      setLeaders(pets.results);
+    }
+  }
+
   useEffect(() => {
     if (!window) return;
     console.log('url query:', query);
     //TODO: it fails:
-    //const currentTokenId = parseInt(query.tokenId);
-    const currentTokenId = 1;
+    const currentTokenId = parseInt(query.tokenId);
+    //const currentTokenId = 1;
     if (currentTokenId) getPet(currentTokenId);
 
+    getLeaders();
 
   }, []);
 
@@ -241,15 +250,15 @@ export const Home = (props) => {
           </Typography>
           <Typography variant="h6" className="description">
             Unleash the power of DeFi through a world of playful pets, where nurturing your AI companion unlocks a universe of knowledge in decentralized finance.
-            </Typography>
-            <Typography variant="body2" color="text.secondary"><ul>
-              <li>Arbitrum Contract: <a target="_blank" href="https://sepolia.arbiscan.io/address/0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b">0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b</a></li>
-              <li>Tableland Table: <a target="_blank" href="https://studio.tableland.xyz/table/defi_pets_421614_477">defi_pets_421614_477</a></li>
-              <li>Flock AI Model: <a target="_blank" href="https://beta.flock.io/model/cluhak6ok00a7d20crl7n6uh8">DeFiPets</a></li>
-              <li>Opensea: <a target="_blank" href="https://testnets.opensea.io/collection/defipets-1">DeFiPets</a></li>
-              </ul>
-
           </Typography>
+
+          <ul>
+            <li>Arbitrum Contract: <a target="_blank" href="https://sepolia.arbiscan.io/address/0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b">0x23ff5fe7b22e00888ca01949761c5bef4c1ff40b</a></li>
+            <li>Tableland Table: <a target="_blank" href="https://studio.tableland.xyz/table/defi_pets_421614_477">defi_pets_421614_477</a></li>
+            <li>Flock AI Model: <a target="_blank" href="https://beta.flock.io/model/cluhak6ok00a7d20crl7n6uh8">DeFiPets</a></li>
+            <li>Opensea: <a target="_blank" href="https://testnets.opensea.io/collection/defipets-1">DeFiPets</a></li>
+          </ul>
+
         </div>
         <div className="elements">
           <div className="element">
@@ -269,7 +278,7 @@ export const Home = (props) => {
                       <EmojiEventsIcon /> Points: {currentPet.points}
                     </Typography>
                     <Typography gutterBottom variant="h6" component="div">
-                      <InvertColorsIcon /> Health:
+                      <InvertColorsIcon /> Health:  {currentPet.health}
                       <Slider
                         marks={[
                           {
@@ -333,7 +342,7 @@ export const Home = (props) => {
                     style={{ fontWeight: 500 }}
                     onClick={() => handleOpenDialog(true)}
                   >
-                    Mint
+                    <EggIcon /> Mint
                   </Button>
                 </CardActions>
               )}
@@ -368,14 +377,14 @@ export const Home = (props) => {
               </Typography>
               <div className="leaderboard">
                 <List sx={{ bgcolor: "background.paper" }}>
-                  {new Array(10).fill(null).map((_, index) => (
+                  {leaders.length > 0 && leaders.map((leader, index) => (
                     <>
-                      <ListItem alignItems="flex-start">
+                      <ListItem alignItems="flex-start" key={index}>
                         <ListItemAvatar>
-                          <EmojiEventsIcon />
+                          #{index + 1}<EmojiEventsIcon />
                         </ListItemAvatar>
                         <ListItemText
-                          primary="Brunch this weekend?"
+                          primary={leader.name}
                           secondary={
                             <Fragment>
                               <Typography
@@ -384,11 +393,9 @@ export const Home = (props) => {
                                 variant="body2"
                                 color="text.primary"
                               >
-                                Ali Connors
+                                Points: {leader.points}
                               </Typography>
-                              {
-                                " — I'll be in your neighborhood doing errands this…"
-                              }
+                              &nbsp; - Owner: {leader.owner}
                             </Fragment>
                           }
                         />
@@ -413,14 +420,14 @@ export const Home = (props) => {
             </Typography>
             <div className="leaderboard">
               <List sx={{ bgcolor: "background.paper" }}>
-                {new Array(10).fill(null).map((_, index) => (
+                {leaders.length > 0 && leaders.map((leader, index) => (
                   <>
                     <ListItem alignItems="flex-start">
                       <ListItemAvatar>
-                        <EmojiEventsIcon />
+                        #{index + 1}<EmojiEventsIcon />
                       </ListItemAvatar>
                       <ListItemText
-                        primary="Brunch this weekend?"
+                        primary={leader.name}
                         secondary={
                           <Fragment>
                             <Typography
@@ -429,11 +436,9 @@ export const Home = (props) => {
                               variant="body2"
                               color="text.primary"
                             >
-                              Ali Connors
+                              Points: {leader.points}
                             </Typography>
-                            {
-                              " — I'll be in your neighborhood doing errands this…"
-                            }
+                            &nbsp; - Owner: {leader.owner}
                           </Fragment>
                         }
                       />
@@ -453,18 +458,39 @@ export const Home = (props) => {
               </Typography>
             </div>
             <div className="cards">
-              {myPets.map((_, index) => (
+              {myPets.length > 0 && myPets.map((myPet, index) => (
                 <Card sx={{ maxWidth: 345 }} key={index}>
                   <CardMedia
                     sx={{ height: 140 }}
                     image={"/stage_" + index + ".jpg"}
-                    title="green iguana"
+                    title={myPet.name}
                   />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
-                      Pet-{index}
+                      {myPet.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography gutterBottom variant="h6" component="div">
+                      <EmojiEventsIcon /> Points: {myPet.points}
+                    </Typography>
+                    <Typography gutterBottom variant="h6" component="div">
+                      <InvertColorsIcon /> Health: {myPet.health}
+                      <Slider
+                        marks={[
+                          {
+                            value: 0,
+                            label: '0%',
+                          },
+                          {
+                            value: 100,
+                            label: '100%',
+                          },
+                        ]}
+                        aria-label="Health"
+                        step={null}
+                        defaultValue={myPet.health}
+                        valueLabelDisplay="auto"
+                        color="secondary"
+                      />
                     </Typography>
                   </CardContent>
                   <CardActions>
@@ -473,7 +499,7 @@ export const Home = (props) => {
                       color="secondary"
                       style={{ fontWeight: 500 }}
                       onClick={() => {
-                        setCurrentPet(index)
+                        setCurrentPet(myPet.id)
                       }}
                     >
                       Select
