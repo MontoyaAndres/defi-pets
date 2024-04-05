@@ -2,10 +2,10 @@
 
 > Unleash the power of DeFi through a world of playful pets, where nurturing your AI companion unlocks a universe of knowledge in decentralized finance.
 
-## The Challenge
+### The Challenge
 While DeFi has revolutionized finance with its innovative protocols and financial models, it often presents a steep learning curve and lacks engaging, interactive elements that can appeal to a broader audience.
 
-## Our Solution
+### Our Solution
 DeFiPets addresses this gap by infusing the DeFi space with a layer of gamification and interactive learning. Through nurturing and evolving digital pets, users are naturally introduced to DeFi concepts and activities.
 
 
@@ -59,7 +59,7 @@ DeFiPets addresses this gap by infusing the DeFi space with a layer of gamificat
 
 
 
-# How DeFiPets Works
+## How DeFiPets Works
 - **Mint Your DeFiPet:** Start by minting an NFT that represents your unique digital pet, ready to grow and evolve.
 - **Smart AI Companion:** Each pet is powered by a FLock AI bot, offering personalized DeFi strategies and insights, making your interactions smarter and your DeFi journey more informed.
 - **DeFi Activities as Pet Care:** Each DeFi action (Deposits, Stakes, Rewards) correlates with pet care tasks (Feeding, - Training, Rewarding), influencing your pet's health and happiness.
@@ -67,7 +67,7 @@ DeFiPets addresses this gap by infusing the DeFi space with a layer of gamificat
 - **Community and Leaderboard:** Engage with the DeFiPet community, compete in challenges, and climb the leaderboard to earn exclusive rewards.
 
 
-# Architecture
+## Architecture
 - **Built on Arbitrum:** Optimizing for efficiency and speed on the Arbitrum layer to enhance user experience and reduce transaction costs.
 - **Data Management with Tableland:** Leveraging Tableland for decentralized, secure storage of pet attributes, evolution data, and user interactions.
 - **AI Integration with FLock:** Utilizing FLock's decentralized machine learning capabilities to personalize pet behaviors and DeFi recommendations, creating a unique and adaptive experience for each user.

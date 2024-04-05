@@ -92,7 +92,7 @@ export default function MyApp(props) {
                 style={{ display: "flex", alignItems: "center" }}
               >
                 <HomeIcon />
-                <span style={{ marginLeft: 8 }}>Home</span>
+                <span style={{ marginLeft: 8 }}><a href="#" style={{color:'#ffff', textDecoration: "none"}}>Home</a></span>
               </Typography>
               <Typography
                 variant="body1"
@@ -100,7 +100,7 @@ export default function MyApp(props) {
                 style={{ display: "flex", alignItems: "center" }}
               >
                 <FlagIcon />
-                <span style={{ marginLeft: 8 }}>Leaderboard</span>
+                <span style={{ marginLeft: 8 }}><a href="#leaderboard" style={{color:'#ffff', textDecoration: "none"}}>Leaderboard</a></span>
               </Typography>
               {walletAddress && (
                 <Typography
@@ -109,7 +109,7 @@ export default function MyApp(props) {
                   style={{ display: "flex", alignItems: "center" }}
                 >
                   <PetsIcon />
-                  <span style={{ marginLeft: 8 }}>My Pets</span>
+                  <span style={{ marginLeft: 8 }}><a href="#myPets" style={{color:'#ffff', textDecoration: "none"}}>My Pets</a></span>
                 </Typography>
               )}
               {walletAddress ? (

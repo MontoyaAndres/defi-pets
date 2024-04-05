@@ -568,9 +568,9 @@ export const Home = (props) => {
                 component="div"
                 style={{ fontWeight: 600 }}
               >
-                Top 10 DeFi-Pets
+                Leaderboard
               </Typography>
-              <div className="leaderboard">
+              <div id="leaderboard" className="leaderboard">
                 <List sx={{ bgcolor: "background.paper" }}>
                   {leaders.length > 0 &&
                     leaders.map((leader, index) => (
@@ -619,9 +619,9 @@ export const Home = (props) => {
               component="div"
               style={{ fontWeight: 600 }}
             >
-              Top 10 DeFi-Pets
+              Leaderboard
             </Typography>
-            <div className="leaderboard">
+            <div id="leaderboard" className="leaderboard">
               <List sx={{ bgcolor: "background.paper" }}>
                 {leaders.length > 0 &&
                   leaders.map((leader, index) => (
@@ -663,7 +663,7 @@ export const Home = (props) => {
         )}
         {myPets.length > 0 && (
           <>
-            <div className="titles">
+            <div id="myPets" className="titles">
               <Typography variant="h4" className="title">
                 My DeFi Pets
               </Typography>
