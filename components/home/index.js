@@ -124,8 +124,9 @@ export const Home = (props) => {
     if (!currentPet?.id) return;
 
     const getDataChat = async () => {
+      // Personalized AI interactions based on the NFT PEt properties:
       const response = await getDataModel(
-        "You are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi."
+        `Your name is ${currentPet.name} and you are a DeFiPet, an AI onboarding bot part of DeFiPets that guides users through the process of starting with DeFi, explaining concepts, and helping them make their first transactions. Give me a welcome to DefiPets, tell me how can I play on DeFiPets, and give me a suggestion of next questions to ask to learn more about DeFi.`
       );
 
       setHistory((prevValues) => [
