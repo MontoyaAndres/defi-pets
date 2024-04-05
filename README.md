@@ -11,12 +11,21 @@ DeFiPets addresses this gap by infusing the DeFi space with a layer of gamificat
 
 <ul>
           <li>
-              Live Demo:
+              Live App:
               <a
                 target="_blank"
                 href="https://defi-pets.vercel.app/"
               >
                 https://defi-pets.vercel.app/
+              </a>
+            </li>
+          <li>
+              Video Demo:
+              <a
+                target="_blank"
+                href="https://www.youtube.com/watch?v=X6CaK7IUf6U"
+              >
+                https://www.youtube.com/watch?v=X6CaK7IUf6U
               </a>
             </li>
             <li>
