@@ -14,9 +14,9 @@ import "@tableland/evm/contracts/utils/SQLHelpers.sol";
 contract DeFiPets is ERC721, ERC721Holder, Ownable {
     // The metadata API
     string private _baseURIString =
-        "https://krebit-challenge.vercel.app/api/metadata?tokenId=";
+        "https://defi-pets.vercel.app/api/metadata?tokenId=";
     string private _contractURIString =
-        "https://krebit-challenge.vercel.app/api/";
+        "https://defi-pets.vercel.app/api/";
 
     // Tableland setup for storing DeFi-Pet metadata
     uint256 private _tableId; // Unique table ID
@@ -160,11 +160,7 @@ contract DeFiPets is ERC721, ERC721Holder, Ownable {
         );
     }
 
-    /* function tokenURI(uint256 tokenId) public view override(ERC721URIStorage, ERC721) returns (string memory) {
-        return super.tokenURI(tokenId);
-    }*/
-
-    /* function totalSupply() override public view returns (uint256) {
+    function totalSupply() override public view returns (uint256) {
       return _tokenIdCounter;
-    }*/
+    }
 }
