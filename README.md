@@ -68,11 +68,10 @@ DeFiPets addresses this gap by infusing the DeFi space with a layer of gamificat
 
 
 ## Architecture
-- **Built on Arbitrum:** Optimizing for efficiency and speed on the Arbitrum layer to enhance user experience and reduce transaction costs.
-- **Data Management with Tableland:** Leveraging Tableland for decentralized, secure storage of pet attributes, evolution data, and user interactions.
-- **AI Integration with FLock:** Utilizing FLock's decentralized machine learning capabilities to personalize pet behaviors and DeFi recommendations, creating a unique and adaptive experience for each user.
-- **Real-Time DeFi Tracking with Zerion:** Integrated Zerion's API to monitor users' wallet positions, reflecting their DeFi activities directly on their DeFiPets.
-
+- **Built on Arbitrum:** Optimizing for efficiency and speed on the Arbitrum layer to enhance user experience and reduce transaction costs.(See [/contracts/DeFiPets.sol](https://github.com/MontoyaAndres/defi-pets/blob/main/contracts/DeFiPets.sol))
+- **Data Management with Tableland:** Leveraging Tableland for decentralized, secure storage of pet attributes, evolution data, and user interactions. (See [/pages/api/metadata.js](https://github.com/MontoyaAndres/defi-pets/blob/main/pages/api/metadata.js) and [/components/home/index.js](https://github.com/MontoyaAndres/defi-pets/blob/main/components/home/index.js))
+- **AI Integration with FLock:** Utilizing FLock's decentralized machine learning capabilities to personalize pet behaviors and DeFi recommendations, creating a unique and adaptive experience for each user. (See [/pages/api/bot.js](https://github.com/MontoyaAndres/defi-pets/blob/main/pages/api/bot.js))
+- **Real-Time DeFi Tracking with Zerion:** Integrated Zerion's API to monitor users' wallet positions, reflecting their DeFi activities directly on their DeFiPets. (See [/pages/api/update.js](https://github.com/MontoyaAndres/defi-pets/blob/main/pages/api/update.js))
 
 ## Install
 
